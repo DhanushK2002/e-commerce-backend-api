@@ -30,8 +30,8 @@ public class ProductService {
 	}
 	
 	//Find Product By ID
-	public ResponseEntity<?> getProductById(Long prodId){
-		Optional<Product> product = productRepo.findById(prodId);
+	public ResponseEntity<?> getProductById(Long productId){
+		Optional<Product> product = productRepo.findById(productId);
 		
 		if(product.isPresent())
 			return ResponseEntity.ok(product.get());
@@ -40,17 +40,22 @@ public class ProductService {
 	}
 
 	//Update Product By ID
-	public Product updateProduct(Long prodId, ProductRequest product) {
-		Product products = productRepo.findById(prodId)
+	public Product updateProduct(Long productId, ProductRequest product) {
+		Product products = productRepo.findById(productId)
 				.orElseThrow(() -> new RuntimeException("Product id not found to update"));
 		
-		products.setProdName(product.getProdName());
+		products.setProductName(product.getProductName());
 		products.setPrice(product.getPrice());
+		products.setDescription(product.getDescription());
+		products.setProductCategory(product.getProductCategory());
+		products.setStock(product.getStock());
 		return productRepo.save(products);
 	}
+	
+	
 	//Delete Product By ID
-	public void deleteProduct(Long prodId) {
-		productRepo.deleteById(prodId);
+	public void deleteProduct(Long productId) {
+		productRepo.deleteById(productId);
 	}
 
 	//Find Products By Category 
