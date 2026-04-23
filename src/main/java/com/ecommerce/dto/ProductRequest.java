@@ -1,5 +1,6 @@
 package com.ecommerce.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -7,10 +8,18 @@ import lombok.Data;
 public class ProductRequest {
 
 	@NotNull(message = "Product name is required")
-	private String prodName;
+	private String productName;
 
 	@NotNull(message = "Product price is required")
-	private Long price;
+	@Min(1)
+	private Double price;
+	
+	@NotNull(message = "Min Stock should be added")
+	@Min(1)
+	private Integer stock;
+	
+	@NotNull(message = "Fill up the product description")
+	private String description;
 	
 	private String productCategory;
 
@@ -18,40 +27,58 @@ public class ProductRequest {
 		super();
 	}
 
-	public ProductRequest(String prodName, Long price, String productCategory) {
+	public ProductRequest(String productName, Double price, String productCategory, Integer stock, String description) {
 		super();
-		this.prodName = prodName;
+		this.productName = productName;
 		this.price = price;
 		this.productCategory = productCategory;
+		this.stock = stock;
+		this.description = description;
 	}
 
-	public String getProdName() {
-		return prodName;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
-	public Long getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Long price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
-	
-	public String getCategory() {
+
+	public Integer getStock() {
+		return stock;
+	}
+
+	public void setStock(Integer stock) {
+		this.stock = stock;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getProductCategory() {
 		return productCategory;
 	}
 
-	public void setCategory(String productCategory) {
+	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
 	}
 
 	@Override
 	public String toString() {
-		return "ProductDto [prodName=" + prodName + ", price=" + price + ", category="+productCategory + "]";
+		return "ProductRequest [productName=" + productName + ", price=" + price + ", stock=" + stock + ", description="
+				+ description + ", productCategory=" + productCategory + "]";
 	}
-
 }

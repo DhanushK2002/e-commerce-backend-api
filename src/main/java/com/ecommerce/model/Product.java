@@ -11,63 +11,86 @@ public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long prodId;
+	private Long productId;
 	
-	private String prodName;
+	private String productName;
 	
-	private Long price;
+	private Double price;
 	
 	private String productCategory;
 	
+	private String description;
+	
+	private Integer stock;
+
 	public Product() {
 		super();
 	}
-	
-	public Product(Long prodId, String prodName, Long price, String productCategory) {
+
+	public Product(Long productId, String productName, Double price, String productCategory, Integer stock, String description) {
 		super();
-		this.prodId = prodId;
-		this.prodName = prodName;
+		this.productId = productId;
+		this.productName = productName;
 		this.price = price;
 		this.productCategory = productCategory;
+		this.stock = stock;
+		this.description = description;
 	}
 
-	public Long getId() {
-		return prodId;
+	public Long getProductId() {
+		return productId;
 	}
 
-	public void setId(Long prodId) {
-		this.prodId = prodId;
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 
-	public String getProdName() {
-		return prodName;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
-	public Long getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Long price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
-	public String getProdCategory() {
+	public String getProductCategory() {
 		return productCategory;
 	}
-	
-	public void setProdCategory(String productCategory) {
+
+	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getStock() {
+		return stock;
+	}
+
+	public void setStock(Integer stock) {
+		this.stock = stock;
 	}
 
 	@Override
 	public String toString() {
-		return "Product [id=" + prodId + ", prodName=" + prodName + ", price=" + price + ",category=" + productCategory + "]";
+		return "Product [productId=" + productId + ", productName=" + productName + ", price=" + price
+				+ ", productCategory=" + productCategory + ", description=" + description + ", stock=" + stock + "]";
 	}
-	
+
 	
 	
 	

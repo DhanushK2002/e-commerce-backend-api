@@ -31,37 +31,36 @@ public class ProductController {
 	
 	//Add New Product
 	@PostMapping("/products")
-	public void addProduct(@RequestBody Product product){
+	public String addProduct(@RequestBody Product product){
 		service.addProduct(product);
+		return "Product Added Successfully";
 	}
 	
 	//Find Product By ID
-	@GetMapping("/products/{prodId}")
-	public ResponseEntity<?> getProductById(@PathVariable Long prodId){
-		return service.getProductById(prodId);
+	@GetMapping("/products/{productId}")
+	public ResponseEntity<?> getProductById(@PathVariable Long productId){
+		return service.getProductById(productId);
 	}
 	
 	//Update Product By ID
 	@PutMapping("/products/{prodId}")
-	public String updateProduct(@PathVariable Long prodId,@RequestBody ProductRequest product) {
-		service.updateProduct(prodId, product);
+	public String updateProduct(@PathVariable Long productId,@RequestBody ProductRequest product) {
+		service.updateProduct(productId, product);
 		return "Product Updated Successfully";
 	}
 	
 	//Find Products By Category 
 	@GetMapping("/products/search/{productCategory}")
-	public ResponseEntity<List<Product>> getProductByCategory(@PathVariable String productCategory){
-		System.out.println("Searching for category "+productCategory);
+	public ResponseEntity<?> getProductByCategory(@PathVariable String productCategory){
 		List<Product> products = service.getProductByCategory(productCategory);
 		if(products.isEmpty())
-			return new  ResponseEntity("Specified Category Not Foudnd",HttpStatus.NOT_FOUND);
-		return new ResponseEntity<>(products,HttpStatus.OK);
-		
+			return new  ResponseEntity<>("Specified Category Not Foudnd",HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(products,HttpStatus.OK);		
 	}
 	
 	//Delete Product By ID
-	@DeleteMapping("/products/{prodId}")
-	public void deleteProduct(@PathVariable Long prodId) {
-		service.deleteProduct(prodId);
+	@DeleteMapping("/products/{productId}")
+	public void deleteProduct(@PathVariable Long productId) {
+		service.deleteProduct(productId);
 	}
 }
