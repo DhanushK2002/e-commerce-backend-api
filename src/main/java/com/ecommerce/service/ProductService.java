@@ -1,65 +1,25 @@
 package com.ecommerce.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.dto.ProductDto;
 import com.ecommerce.model.Product;
-import com.ecommerce.repository.ProductRepository;
 
-
-@Service
-public class ProductService {
-
-	@Autowired
-	private ProductRepository productRepo;
-
-	// List of All Products
-	public List<Product> getAllProducts() {
-		return productRepo.findAll();
-	}
+public interface ProductService {
 	
-	//Add New Product
-	public void addProduct(Product product) {
-		productRepo.save(product);
-	}
+	public List<Product> getAllProducts();
 	
-	//Find Product By ID
-	public ResponseEntity<?> getProductById(Long productId){
-		Optional<Product> product = productRepo.findById(productId);
-		
-		if(product.isPresent())
-			return ResponseEntity.ok(product.get());
-		else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Not Found");
-	}
+	public void addProduct(ProductDto productDto);
+	
+	public ResponseEntity<?> getProductById(Long productId);
 
-	//Update Product By ID
-	public Product updateProduct(Long productId, ProductRequest product) {
-		Product products = productRepo.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product id not found to update"));
-		
-		products.setProductName(product.getProductName());
-		products.setPrice(product.getPrice());
-		products.setDescription(product.getDescription());
-		products.setProductCategory(product.getProductCategory());
-		products.setStock(product.getStock());
-		return productRepo.save(products);
-	}
+	public Product updateProduct(Long productId, ProductDto productDto);
 	
+	public void deleteProduct(Long productId);
 	
-	//Delete Product By ID
-	public void deleteProduct(Long productId) {
-		productRepo.deleteById(productId);
-	}
-
-	//Find Products By Category 
-	public List<Product> getProductByCategory(String productCategory) {
-		return productRepo.getProductByCategory(productCategory);
-	}
+	public List<Product> getProductByCategory(String productCategory);
+	
+	public String placeOrder(Integer quantity, Long productId);
 }
