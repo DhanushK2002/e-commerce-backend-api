@@ -2,10 +2,9 @@ package com.ecommerce.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class ProductRequest {
+
+public class ProductDto {
 
 	@NotNull(message = "Product name is required")
 	private String productName;
@@ -23,11 +22,11 @@ public class ProductRequest {
 	
 	private String productCategory;
 
-	public ProductRequest() {
+	public ProductDto() {
 		super();
 	}
 
-	public ProductRequest(String productName, Double price, String productCategory, Integer stock, String description) {
+	public ProductDto(String productName, Double price, String productCategory, Integer stock, String description) {
 		super();
 		this.productName = productName;
 		this.price = price;

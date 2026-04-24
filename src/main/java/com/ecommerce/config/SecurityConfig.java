@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class SecurityConfig {
 	
-	private static Logger log = LoggerFactory.getLogger(SecurityConfig.class);  
+	private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);  
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		log.info("Security configuration");

@@ -1,12 +1,21 @@
 package com.ecommerce.model;
 
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Product {
 
 	@Id
@@ -91,7 +100,6 @@ public class Product {
 				+ ", productCategory=" + productCategory + ", description=" + description + ", stock=" + stock + "]";
 	}
 
-	
-	
-	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	private List<Order> orders;	
 }

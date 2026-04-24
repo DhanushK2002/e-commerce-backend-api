@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.dto.ProductDto;
 import com.ecommerce.model.Product;
-import com.ecommerce.service.ProductService;
+import com.ecommerce.serviceImpl.ProductServiceImplementation;
 
 @RestController
 public class ProductController {
 
 	@Autowired
-	private ProductService service;
+	private ProductServiceImplementation service;
 	
 	// List of All Products
 	@GetMapping("/products")
@@ -31,8 +32,8 @@ public class ProductController {
 	
 	//Add New Product
 	@PostMapping("/products")
-	public String addProduct(@RequestBody Product product){
-		service.addProduct(product);
+	public String addProduct(@RequestBody ProductDto productDto){
+		service.addProduct(productDto);
 		return "Product Added Successfully";
 	}
 	
@@ -43,9 +44,9 @@ public class ProductController {
 	}
 	
 	//Update Product By ID
-	@PutMapping("/products/{prodId}")
-	public String updateProduct(@PathVariable Long productId,@RequestBody ProductRequest product) {
-		service.updateProduct(productId, product);
+	@PutMapping("/products/{productId}")
+	public String updateProduct(@PathVariable Long productId,@RequestBody ProductDto productDto) {
+		service.updateProduct(productId, productDto);
 		return "Product Updated Successfully";
 	}
 	
@@ -60,7 +61,14 @@ public class ProductController {
 	
 	//Delete Product By ID
 	@DeleteMapping("/products/{productId}")
-	public void deleteProduct(@PathVariable Long productId) {
+	public String deleteProduct(@PathVariable Long productId) {
 		service.deleteProduct(productId);
+		return "Product Deleted Successfully";
+	}
+	
+	//Place Order
+	@PostMapping("/products/order")
+	public String placeOrder(@RequestParam Long productId, @RequestParam Integer quantity) {
+		return service.placeOrder(quantity,productId);
 	}
 }
