@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+//Need to be checked
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -23,6 +24,10 @@ public class Order {
 	private LocalDateTime orderDate;
 	
 	@ManyToOne
+	@JoinColumn(name = "userId")
+	private User user;
+	
+	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
 
@@ -30,8 +35,9 @@ public class Order {
 		super();
 	}
 
-	public Order(Product product, Integer quantity) {
+	public Order(User user,Product product, Integer quantity) {
 		super();
+		this.user = user;
 		this.product = product;
 		this.quantity = quantity;
 		this.orderDate = LocalDateTime.now();

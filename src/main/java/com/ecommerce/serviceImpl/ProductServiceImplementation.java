@@ -1,19 +1,20 @@
 package com.ecommerce.serviceImpl;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+//import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.ProductDto;
+import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.model.Order;
 import com.ecommerce.model.Product;
+import com.ecommerce.model.User;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
+import com.ecommerce.repository.UserRepository;
 import com.ecommerce.service.ProductService;
 
 import jakarta.transaction.Transactional;
@@ -25,10 +26,35 @@ public class ProductServiceImplementation implements ProductService {
 	private ProductRepository productRepo;
 	
 	@Autowired
-	private ModelMapper mapperModel;
+	private UserRepository userRepo;
+	
+//	@Autowired
+//	private ModelMapper mapperModel;
 	
 	@Autowired
 	private OrderRepository orderRepo;
+	
+	private ProductRequest convertToDto(Product product) {
+		ProductRequest dto = new ProductRequest();
+		dto.setProductId(product.getProductId());
+		dto.setProductName(product.getProductName());
+		dto.setPrice(product.getPrice());
+		dto.setDescription(product.getDescription());
+		dto.setProductCategory(product.getProductCategory());
+		dto.setStock(product.getStock());
+		return dto;
+	}
+	
+	private Product convertToEntity(ProductRequest dto) {
+		Product product = new Product();
+		product.setProductId(dto.getProductId());
+		product.setProductName(dto.getProductName());
+		product.setPrice(dto.getPrice());
+		product.setDescription(dto.getDescription());
+		product.setProductCategory(dto.getProductCategory());
+		product.setStock(dto.getStock());
+		return product;
+	}
 
 	// List of All Products
 	@Override
@@ -38,34 +64,33 @@ public class ProductServiceImplementation implements ProductService {
 	
 	//Add New Product
 	@Override
-	public void addProduct(ProductDto productDto) {
-		Product product = mapperModel.map(productDto, Product.class);
-		productRepo.save(product);
+	public ProductRequest addProduct(ProductRequest productDto) {
+		//Product product = mapperModel.map(productDto, Product.class);
+		//productRepo.save(product);
+		Product product = convertToEntity(productDto);
+		return convertToDto(productRepo.save(product));		
 	}
 	
 	//Find Product By ID
 	@Override
-	public ResponseEntity<?> getProductById(Long productId){
-		Optional<Product> product = productRepo.findById(productId);
-		
-		if(product.isPresent())
-			return ResponseEntity.ok(product.get());
-		else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Not Found");
+	public ProductRequest getProductById(Long productId){
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		return convertToDto(product);
 	}
 
 	//Update Product By ID
 	@Override
-	public Product updateProduct(Long productId, ProductDto productDto) {
+	public ProductRequest updateProduct(Long productId, ProductRequest productDto) {
 		Product products = productRepo.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product id not found to update"));
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 		
 		products.setProductName(productDto.getProductName());
 		products.setPrice(productDto.getPrice());
 		products.setDescription(productDto.getDescription());
 		products.setProductCategory(productDto.getProductCategory());
 		products.setStock(productDto.getStock());
-		return productRepo.save(products);
+		return convertToDto( productRepo.save(products));
 	}
 	
 	//Delete Product By ID
@@ -76,24 +101,31 @@ public class ProductServiceImplementation implements ProductService {
 
 	//Find Products By Category
 	@Override
-	public List<Product> getProductByCategory(String productCategory) {
-		return productRepo.getProductByCategory(productCategory);
+	public List<ProductRequest> getProductByCategory(String productCategory) {
+		return productRepo.getProductByCategory(productCategory)
+				.stream()
+				.map(product -> this.convertToDto(product)) //.map(this :: convertToDto)
+				.collect(Collectors.toList()); //.toList();
 	}
 
 	//Place order
 	@Transactional
 	@Override
-	public String placeOrder(Integer quantity, Long productId) {
+	public String placeOrder(Integer quantity, Long userId,Long productId) {
 		Product product = productRepo.findById(productId)
 				.orElseThrow(() -> new RuntimeException("Product not found") );
 		if(product.getStock() <= 0) {
-			System.out.println(product.getStock());
+			//System.out.println(product.getStock());
 			throw new RuntimeException("Out of stock, available stock is "+product.getStock());
 		}
 			product.setStock(product.getStock() - quantity);
 			productRepo.save(product);
 			
-			Order newOrder = new Order(product,quantity);
+			//Need to be checked
+			User user = userRepo.findById(userId)
+					.orElseThrow(() -> new RuntimeException("User not found"));
+			
+			Order newOrder = new Order(user,product,quantity);
 			orderRepo.save(newOrder);			
 			
 			return "Order Placed for the item "+product.getProductName();			
