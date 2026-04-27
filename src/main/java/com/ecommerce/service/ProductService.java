@@ -2,24 +2,23 @@ package com.ecommerce.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 
-import com.ecommerce.dto.ProductDto;
+import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.model.Product;
 
 public interface ProductService {
 	
 	public List<Product> getAllProducts();
 	
-	public void addProduct(ProductDto productDto);
+	public ProductRequest addProduct(ProductRequest productDto);
 	
-	public ResponseEntity<?> getProductById(Long productId);
+	public ProductRequest getProductById(Long productId);
 
-	public Product updateProduct(Long productId, ProductDto productDto);
+	public ProductRequest updateProduct(Long productId, ProductRequest productDto);
 	
 	public void deleteProduct(Long productId);
 	
-	public List<Product> getProductByCategory(String productCategory);
+	public List<ProductRequest> getProductByCategory(String productCategory);
 	
-	public String placeOrder(Integer quantity, Long productId);
+	public String placeOrder(Integer quantity, Long userId, Long productId);
 }

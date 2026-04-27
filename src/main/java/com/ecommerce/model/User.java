@@ -1,11 +1,17 @@
 package com.ecommerce.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,7 +25,7 @@ public class User {
 	
 	private String username;
 	
-	@Email
+	@Column(unique = true)
 	private String email;
 	
 	@NotBlank
@@ -27,18 +33,23 @@ public class User {
 	
 	@NotNull
 	private String address;
+	
+	@Enumerated(EnumType.STRING)
+	private Role role;
+
 
 	public User() {
 		super();
 	}
 
-	public User(Long userId, String username, String address, String email, String password) {
+	public User(Long userId, String username, String address, String email, String password,Role role) {
 		super();
 		this.userId = userId;
 		this.username = username;
 		this.address = address;
 		this.email = email;
 		this.password = password;
+		this.role = role;
 	}
 
 	public Long getUserId() {
@@ -65,10 +76,37 @@ public class User {
 		this.address = address;
 	}
 
-	@Override
-	public String toString() {
-		return "User [userId=" + userId + ", username=" + username + ", addresss=" + address +", email="+email+"]";
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Order> orders;	
+
+//	@Override
+//	public String toString() {
+//		return "User [userId=" + userId + ", username=" + username + ", email=" + email + ", password=" + password
+//				+ ", address=" + address + ", role=" + role + "]";
+//	}
 	
 }

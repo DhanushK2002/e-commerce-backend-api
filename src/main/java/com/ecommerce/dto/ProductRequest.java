@@ -3,9 +3,9 @@ package com.ecommerce.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+public class ProductRequest {
 
-public class ProductDto {
-
+	private Long productId;
 	@NotNull(message = "Product name is required")
 	private String productName;
 
@@ -22,17 +22,27 @@ public class ProductDto {
 	
 	private String productCategory;
 
-	public ProductDto() {
+	public ProductRequest() {
 		super();
 	}
 
-	public ProductDto(String productName, Double price, String productCategory, Integer stock, String description) {
+	public ProductRequest(Long productId, String productName, Double price, String productCategory, Integer stock, String description) {
 		super();
 		this.productName = productName;
 		this.price = price;
 		this.productCategory = productCategory;
 		this.stock = stock;
 		this.description = description;
+		this.productId = productId;
+	}
+
+	
+	public Long getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 
 	public String getProductName() {
