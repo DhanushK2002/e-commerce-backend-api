@@ -64,10 +64,4 @@ public class ProductController {
 		service.deleteProduct(productId);
 		return ResponseEntity.ok("Product Deleted Successfully");
 	}
-	
-//	//Place Order
-//	@PostMapping("/place")
-//	public String placeOrder(@RequestParam Long productId, @RequestParam Integer quantity) {
-//		return service.placeOrder(quantity,productId);
-//	}
 }
