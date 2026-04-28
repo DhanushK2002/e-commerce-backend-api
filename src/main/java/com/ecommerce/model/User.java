@@ -2,6 +2,8 @@ package com.ecommerce.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +31,7 @@ public class User {
 	private String email;
 	
 	@NotBlank
+	@JsonIgnore
 	private String password;
 	
 	@NotNull
@@ -102,11 +105,5 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Order> orders;	
-
-//	@Override
-//	public String toString() {
-//		return "User [userId=" + userId + ", username=" + username + ", email=" + email + ", password=" + password
-//				+ ", address=" + address + ", role=" + role + "]";
-//	}
 	
 }

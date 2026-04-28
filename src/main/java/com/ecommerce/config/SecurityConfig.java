@@ -36,9 +36,11 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
 						.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/products/**").permitAll().requestMatchers("/orders/**")
-						.hasRole("CUSTOMER").anyRequest().authenticated())
+						.requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+						.requestMatchers("/orders/all").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET,"/orders/**").hasRole("CUSTOMER").anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults());
+		
 		return http.build();
 	}
 }

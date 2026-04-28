@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+	
 	@Autowired
 	private UserRepository userRepository;
 
@@ -18,15 +19,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
-		System.out.println("User role from db " + user.getRole().name());
 		
-		System.out.println("User Email: "+ user.getEmail());
+//		System.out.println("User role from db " + user.getRole().name());
+//		
+//		System.out.println("User Email: "+ user.getEmail());
 		
 		return org.springframework.security.core.userdetails.User
-				.withUsername(user.getEmail())
+				.withUsername(user.getEmail()) 
 				.password(user.getPassword())
 				.roles(user.getRole().name())
 				.build();
-
 	}
 }
