@@ -23,45 +23,45 @@ import com.ecommerce.serviceImpl.ProductServiceImplementation;
 public class ProductController {
 
 	@Autowired
-	private ProductServiceImplementation service;
+	private ProductServiceImplementation productService;
 	
 	// List of All Products
 	@GetMapping
 	public ResponseEntity<List<Product>> getAllProducts() {
-		return ResponseEntity.ok(service.getAllProducts());
+		return ResponseEntity.ok(productService.getAllProducts());
 	}
 	
 	//Add New Product
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/add")
 	public ResponseEntity<ProductRequest> addProduct(@RequestBody ProductRequest productDto){
-		return ResponseEntity.ok(service.addProduct(productDto));
+		return ResponseEntity.ok(productService.addProduct(productDto));
 	}
 	
 	//Find Product By ID
 	@GetMapping("/{productId}")
 	public ResponseEntity<ProductRequest> getProductById(@PathVariable Long productId){
-		return ResponseEntity.ok(service.getProductById(productId));
+		return ResponseEntity.ok(productService.getProductById(productId));
 	}
 	
 	//Update Product By ID
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/update/{productId}")
 	public ResponseEntity<ProductRequest> updateProduct(@PathVariable Long productId,@RequestBody ProductRequest productDto) {
-		return ResponseEntity.ok(service.updateProduct(productId, productDto));
+		return ResponseEntity.ok(productService.updateProduct(productId, productDto));
 	}
 	
 	//Find Products By Category 
 	@GetMapping("/search/{productCategory}")
 	public ResponseEntity<List<ProductRequest>> getProductByCategory(@PathVariable String productCategory){
-		return ResponseEntity.ok(service.getProductByCategory(productCategory));
+		return ResponseEntity.ok(productService.getProductByCategory(productCategory));
 	}
 	
 	//Delete Product By ID
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/delete/{productId}")
 	public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
-		service.deleteProduct(productId);
+		productService.deleteProduct(productId);
 		return ResponseEntity.ok("Product Deleted Successfully");
 	}
 }

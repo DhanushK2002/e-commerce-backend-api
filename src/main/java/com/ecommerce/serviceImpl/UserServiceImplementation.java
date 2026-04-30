@@ -44,6 +44,7 @@ public class UserServiceImplementation implements UserService {
 		return ResponseEntity.ok("User Register Successfully");
 	}
 
+	//Need to be checked
 	@Override
 	public ResponseEntity<?> login(LoginRequest login) {
 		User user = userRepo.findByUsername(login.getUsername())
@@ -52,7 +53,7 @@ public class UserServiceImplementation implements UserService {
 		if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
 		}
-		return ResponseEntity.ok("User login Successfull");
+		return ResponseEntity.ok("User "+user.getUsername()+ " login Successfull");
 	}
 
 }
