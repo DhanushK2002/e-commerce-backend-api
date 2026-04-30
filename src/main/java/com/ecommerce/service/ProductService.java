@@ -12,7 +12,7 @@ public interface ProductService {
 	
 	public List<Product> getAllProducts();
 	
-	public ProductRequest addProduct(ProductRequest productDto);
+	public ProductRequest addProduct(ProductRequest productDto, String username);
 	
 	public ProductRequest getProductById(Long productId);
 

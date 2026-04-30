@@ -15,7 +15,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
-//@Component
+@Component
 public class JwtUtil {
 	
 //	@Value("${jwt.secret}")
@@ -23,7 +23,6 @@ public class JwtUtil {
 	
 	@Value("${jwt.expirationMs}")
 	private long expirationMs;
-	
 	
 	public JwtUtil() {
 		// Generates own key
@@ -35,12 +34,11 @@ public class JwtUtil {
 			e.printStackTrace();
 		 }
 	}
-	public String generateToken(String username, String role) {
-		System.out.println("Inside JWT UTIL");
+	
+	public String generateToken(String username) {
 		return Jwts.builder()
 				.setSubject(username)
-				.claim("role", role)
-				.setIssuedAt(new Date(System.currentTimeMillis()))
+				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + expirationMs))
 				.signWith(getKey())
 				.compact();		
@@ -60,6 +58,18 @@ public class JwtUtil {
 	
 	public String extractUsername(String token) {
 		return extractClaims(token).getSubject();
+	}
+	
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parserBuilder()
+			.setSigningKey(getKey())
+			.build()
+			.parseClaimsJws(token);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
 	}
 	
 }
