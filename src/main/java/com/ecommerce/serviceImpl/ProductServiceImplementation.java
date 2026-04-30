@@ -15,6 +15,7 @@ import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.exception.UserNotFoundException;
 import com.ecommerce.model.Order;
 import com.ecommerce.model.Product;
+import com.ecommerce.model.Role;
 import com.ecommerce.model.User;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
@@ -68,12 +69,19 @@ public class ProductServiceImplementation implements ProductService {
 
 	// Add New Product
 	@Override
-	public ProductRequest addProduct(ProductRequest productDto) {
-		 Product product = mapperModel.map(productDto, Product.class);
-		 Product savedProduct = productRepo.save(product);
+	public ProductRequest addProduct(ProductRequest productDto, String username) {
+		User user = userRepo.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("User is not ADMIN"));
+		
+		if(user.getRole() != Role.ADMIN) {
+			throw new RuntimeException("You are not authorised");
+		}
+		
+		Product product = mapperModel.map(productDto, Product.class);
+		Product savedProduct = productRepo.save(product);
 		 
-		 ProductRequest productRequest = mapperModel.map(savedProduct, ProductRequest.class);
-		 return productRequest;
+		ProductRequest productRequest = mapperModel.map(savedProduct, ProductRequest.class);
+		return productRequest;
 //		Product product = convertToEntity(productDto);
 //		return convertToDto(productRepo.save(product));
 	}
@@ -140,7 +148,7 @@ public class ProductServiceImplementation implements ProductService {
 			orderRepo.save(newOrder);
 		else
 			throw new RuntimeException("Not the same user");
-//
+
 		return "Order Placed for the item " + product.getProductName();
 	}
 
@@ -149,7 +157,6 @@ public class ProductServiceImplementation implements ProductService {
 	@Override
 	public List<OrderResponseRequest> getMyOrders() {
 		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
-		System.out.println(identifier);
 		User user = userRepo.findByUsername(identifier)
 				.orElseThrow(() -> new UserNotFoundException("User not found with username "+identifier));
 		List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());

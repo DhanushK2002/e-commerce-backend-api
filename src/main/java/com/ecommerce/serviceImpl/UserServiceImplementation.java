@@ -1,12 +1,10 @@
 package com.ecommerce.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.LoginRequest;
 import com.ecommerce.dto.RegisterRequest;
 import com.ecommerce.model.Role;
 import com.ecommerce.model.User;
@@ -43,17 +41,4 @@ public class UserServiceImplementation implements UserService {
 		userRepo.save(user);
 		return ResponseEntity.ok("User Register Successfully");
 	}
-
-	//Need to be checked
-	@Override
-	public ResponseEntity<?> login(LoginRequest login) {
-		User user = userRepo.findByUsername(login.getUsername())
-				.orElseThrow(() -> new RuntimeException("User not found"));
-
-		if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
-		}
-		return ResponseEntity.ok("User "+user.getUsername()+ " login Successfull");
-	}
-
 }

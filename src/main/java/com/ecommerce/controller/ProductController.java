@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.model.Product;
 import com.ecommerce.serviceImpl.ProductServiceImplementation;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/products")
@@ -32,10 +35,10 @@ public class ProductController {
 	}
 	
 	//Add New Product
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/add")
-	public ResponseEntity<ProductRequest> addProduct(@RequestBody ProductRequest productDto){
-		return ResponseEntity.ok(productService.addProduct(productDto));
+	public ResponseEntity<ProductRequest> addProduct(@Valid @RequestBody ProductRequest productDto, Authentication auth){
+		return ResponseEntity.ok(productService.addProduct(productDto,auth.getName()));
 	}
 	
 	//Find Product By ID
