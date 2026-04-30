@@ -82,7 +82,4 @@ public class Order {
 	public void setProduct(Product product) {
 		this.product = product;
 	}	
-	
-	
-	
 }

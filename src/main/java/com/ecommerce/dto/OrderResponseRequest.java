@@ -18,8 +18,7 @@ public class OrderResponseRequest {
         }
         if(order.getProduct() != null) {
         	this.productName = order.getProduct().getProductName();
-        }
-        
+        } 
     }
 
 	public Long getOrderId() {

@@ -3,7 +3,7 @@ package com.ecommerce.serviceImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//import org.modelmapper.ModelMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,33 +32,33 @@ public class ProductServiceImplementation implements ProductService {
 	@Autowired
 	private UserRepository userRepo;
 
-//	@Autowired
-//	private ModelMapper mapperModel;
+	@Autowired
+	private ModelMapper mapperModel;
 
 	@Autowired
 	private OrderRepository orderRepo;
 
-	private ProductRequest convertToDto(Product product) {
-		ProductRequest dto = new ProductRequest();
-		dto.setProductId(product.getProductId());
-		dto.setProductName(product.getProductName());
-		dto.setPrice(product.getPrice());
-		dto.setDescription(product.getDescription());
-		dto.setProductCategory(product.getProductCategory());
-		dto.setStock(product.getStock());
-		return dto;
-	}
+//	private ProductRequest convertToDto(Product product) {
+//		ProductRequest productDto = new ProductRequest();
+//		productDto.setProductId(product.getProductId());
+//		productDto.setProductName(product.getProductName());
+//		productDto.setPrice(product.getPrice());
+//		productDto.setDescription(product.getDescription());
+//		productDto.setProductCategory(product.getProductCategory());
+//		productDto.setStock(product.getStock());
+//		return productDto;
+//	}
 
-	private Product convertToEntity(ProductRequest dto) {
-		Product product = new Product();
-		product.setProductId(dto.getProductId());
-		product.setProductName(dto.getProductName());
-		product.setPrice(dto.getPrice());
-		product.setDescription(dto.getDescription());
-		product.setProductCategory(dto.getProductCategory());
-		product.setStock(dto.getStock());
-		return product;
-	}
+//	private Product convertToEntity(ProductRequest productDto) {
+//		Product product = new Product();
+//		product.setProductId(productDto.getProductId());
+//		product.setProductName(productDto.getProductName());
+//		product.setPrice(productDto.getPrice());
+//		product.setDescription(productDto.getDescription());
+//		product.setProductCategory(productDto.getProductCategory());
+//		product.setStock(productDto.getStock());
+//		return product;
+//	}
 
 	// List of All Products
 	@Override
@@ -69,10 +69,13 @@ public class ProductServiceImplementation implements ProductService {
 	// Add New Product
 	@Override
 	public ProductRequest addProduct(ProductRequest productDto) {
-		// Product product = mapperModel.map(productDto, Product.class);
-		// productRepo.save(product);
-		Product product = convertToEntity(productDto);
-		return convertToDto(productRepo.save(product));
+		 Product product = mapperModel.map(productDto, Product.class);
+		 Product savedProduct = productRepo.save(product);
+		 
+		 ProductRequest productRequest = mapperModel.map(savedProduct, ProductRequest.class);
+		 return productRequest;
+//		Product product = convertToEntity(productDto);
+//		return convertToDto(productRepo.save(product));
 	}
 
 	// Find Product By ID
@@ -80,7 +83,8 @@ public class ProductServiceImplementation implements ProductService {
 	public ProductRequest getProductById(Long productId) {
 		Product product = productRepo.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-		return convertToDto(product);
+		return mapperModel.map(product, ProductRequest.class);
+		//return convertToDto(product);
 	}
 
 	// Update Product By ID
@@ -94,7 +98,10 @@ public class ProductServiceImplementation implements ProductService {
 		products.setDescription(productDto.getDescription());
 		products.setProductCategory(productDto.getProductCategory());
 		products.setStock(productDto.getStock());
-		return convertToDto(productRepo.save(products));
+		
+		return mapperModel.map(productRepo.save(products), ProductRequest.class);
+		
+		//return convertToDto(productRepo.save(products));
 	}
 
 	// Delete Product By ID
@@ -108,9 +115,9 @@ public class ProductServiceImplementation implements ProductService {
 	public List<ProductRequest> getProductByCategory(String productCategory) {
 		return productRepo.getProductByCategory(productCategory)
 				.stream()
-				.map(product -> this.convertToDto(product)) // .map(this::convertToDto)
-				.collect(Collectors.toList()); // .toList();
-																																																																
+				.map(product -> this.mapperModel.map(product, ProductRequest.class)) // .map(this::convertToDto)
+				//.map(product -> this.convertToDto(product)) 
+				.collect(Collectors.toList()); // .toList();																																																													
 	}
 
 	// Place order
@@ -127,8 +134,13 @@ public class ProductServiceImplementation implements ProductService {
 		User user = userRepo.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
 		Order newOrder = new Order(user, product, quantity);
-		orderRepo.save(newOrder);
-
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		
+		if(user.getUsername().equals(username))
+			orderRepo.save(newOrder);
+		else
+			throw new RuntimeException("Not the same user");
+//
 		return "Order Placed for the item " + product.getProductName();
 	}
 
@@ -137,8 +149,9 @@ public class ProductServiceImplementation implements ProductService {
 	@Override
 	public List<OrderResponseRequest> getMyOrders() {
 		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userRepo.findByEmail(identifier)
-				.orElseThrow(() -> new UserNotFoundException("User not found with email "+identifier));
+		System.out.println(identifier);
+		User user = userRepo.findByUsername(identifier)
+				.orElseThrow(() -> new UserNotFoundException("User not found with username "+identifier));
 		List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
 		
 		return orders.stream()
