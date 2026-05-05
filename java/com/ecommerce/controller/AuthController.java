@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.dto.LoginRequest;
-import com.ecommerce.dto.RegisterRequest;
+import com.ecommerce.dto.LoginDto;
+import com.ecommerce.dto.RegisterDto;
 import com.ecommerce.serviceImpl.UserServiceImplementation;
 import com.ecommerce.util.JwtUtil;
 
@@ -32,12 +32,12 @@ public class AuthController {
 	private JwtUtil jwtUtil;
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+	public ResponseEntity<?> register(@Valid @RequestBody RegisterDto request) {
 		return userService.register(request);
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+	public ResponseEntity<?> login(@RequestBody LoginDto request) {
 		authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
 		String token = jwtUtil.generateToken(request.getUsername());

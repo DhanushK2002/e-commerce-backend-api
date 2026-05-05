@@ -2,8 +2,8 @@ package com.ecommerce.service;
 
 import java.util.List;
 
-import com.ecommerce.model.Category;
+import com.ecommerce.dto.CategoryDto;
 
 public interface CategoryService {
-	public List<Category> getAllCategories();
+	public List<CategoryDto> getAllCategories();
 }

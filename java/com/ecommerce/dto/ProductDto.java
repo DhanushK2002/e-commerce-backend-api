@@ -3,7 +3,7 @@ package com.ecommerce.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public class ProductRequest {
+public class ProductDto {
 
 	private Long productId;
 	
@@ -21,11 +21,11 @@ public class ProductRequest {
 	@NotNull(message = "Fill up the product description")
 	private String description;
 
-	public ProductRequest() {
+	public ProductDto() {
 		super();
 	}
 
-	public ProductRequest(Long productId, String productName, Double price, Integer stock, String description) {
+	public ProductDto(Long productId, String productName, Double price, Integer stock, String description) {
 		super();
 		this.productName = productName;
 		this.price = price;

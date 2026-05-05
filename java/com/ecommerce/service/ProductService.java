@@ -4,27 +4,25 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.ecommerce.dto.OrderResponseRequest;
-import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.dto.OrderDto;
+import com.ecommerce.dto.ProductDto;
 import com.ecommerce.model.Product;
 
 public interface ProductService {
 	
 	public List<Product> getAllProducts();
 	
-	public ProductRequest addProduct(ProductRequest productDto, String username);
+	public ProductDto addProduct(ProductDto productDto, String username);
 	
-	public ProductRequest getProductById(Long productId);
+	public ProductDto getProductById(Long productId);
 
-	public ProductRequest updateProduct(Long productId, ProductRequest productDto);
+	public ProductDto updateProduct(Long productId, ProductDto productDto);
 	
 	public void deleteProduct(Long productId);
 	
-	public List<ProductRequest> getProductByCategory(String productCategory);
-	
 	public String placeOrder(Long userId, Long productId, Integer quantity);
 
-	public List<OrderResponseRequest> getMyOrders();
+	public List<OrderDto> getMyOrders();
 	
 	public ResponseEntity<?> getAllOrders();
 

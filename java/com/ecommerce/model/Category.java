@@ -3,7 +3,7 @@ package com.ecommerce.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +21,7 @@ public class Category {
 	private String categoryName;
 	
 	@OneToMany(mappedBy = "category")
-	@JsonManagedReference
+	@JsonIgnore
 	private List<SubCategory> subCategories = new ArrayList<>();
 
 	public Category() {
@@ -33,11 +33,6 @@ public class Category {
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;
 		this.subCategories = subCategories;
-	}
-	
-	public Category( String categoryName) {
-//		this.categoryId = categoryId;
-		this.categoryName = categoryName;
 	}
 
 	public Long getCategoryId() {

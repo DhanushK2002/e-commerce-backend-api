@@ -1,18 +1,17 @@
 package com.ecommerce.serviceImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.OrderResponseRequest;
-import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.dto.OrderDto;
+import com.ecommerce.dto.ProductDto;
 import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.exception.UserNotFoundException;
 import com.ecommerce.model.Category;
@@ -41,31 +40,6 @@ public class ProductServiceImplementation implements ProductService {
 
 	@Autowired
 	private OrderRepository orderRepo;
-	
-	@Autowired
-	private CategoryRepository categoryRepo;
-
-//	private ProductRequest convertToDto(Product product) {
-//		ProductRequest productDto = new ProductRequest();
-//		productDto.setProductId(product.getProductId());
-//		productDto.setProductName(product.getProductName());
-//		productDto.setPrice(product.getPrice());
-//		productDto.setDescription(product.getDescription());
-//		productDto.setProductCategory(product.getProductCategory());
-//		productDto.setStock(product.getStock());
-//		return productDto;
-//	}
-
-//	private Product convertToEntity(ProductRequest productDto) {
-//		Product product = new Product();
-//		product.setProductId(productDto.getProductId());
-//		product.setProductName(productDto.getProductName());
-//		product.setPrice(productDto.getPrice());
-//		product.setDescription(productDto.getDescription());
-//		product.setProductCategory(productDto.getProductCategory());
-//		product.setStock(productDto.getStock());
-//		return product;
-//	}
 
 	// List of All Products
 	@Override
@@ -75,7 +49,7 @@ public class ProductServiceImplementation implements ProductService {
 
 	// Add New Product
 	@Override
-	public ProductRequest addProduct(ProductRequest productDto, String username) {
+	public ProductDto addProduct(ProductDto productDto, String username) {
 		User user = userRepo.findByUsername(username)
 				.orElseThrow(() -> new RuntimeException("User is not ADMIN"));
 		
@@ -86,7 +60,7 @@ public class ProductServiceImplementation implements ProductService {
 		Product product = mapperModel.map(productDto, Product.class);
 		Product savedProduct = productRepo.save(product);
 		 
-		ProductRequest productRequest = mapperModel.map(savedProduct, ProductRequest.class);
+		ProductDto productRequest = mapperModel.map(savedProduct, ProductDto.class);
 		return productRequest;
 //		Product product = convertToEntity(productDto);
 //		return convertToDto(productRepo.save(product));
@@ -94,16 +68,16 @@ public class ProductServiceImplementation implements ProductService {
 
 	// Find Product By ID
 	@Override
-	public ProductRequest getProductById(Long productId) {
+	public ProductDto getProductById(Long productId) {
 		Product product = productRepo.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-		return mapperModel.map(product, ProductRequest.class);
+		return mapperModel.map(product, ProductDto.class);
 		//return convertToDto(product);
 	}
 
 	// Update Product By ID
 	@Override
-	public ProductRequest updateProduct(Long productId, ProductRequest productDto) {
+	public ProductDto updateProduct(Long productId, ProductDto productDto) {
 		Product products = productRepo.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
@@ -113,7 +87,7 @@ public class ProductServiceImplementation implements ProductService {
 		
 		products.setStock(productDto.getStock());
 		
-		return mapperModel.map(productRepo.save(products), ProductRequest.class);
+		return mapperModel.map(productRepo.save(products), ProductDto.class);
 		
 		//return convertToDto(productRepo.save(products));
 	}
@@ -122,17 +96,6 @@ public class ProductServiceImplementation implements ProductService {
 	@Override
 	public void deleteProduct(Long productId) {
 		productRepo.deleteById(productId);
-	}
-
-	// Find Products By Category
-	@Override
-	public List<ProductRequest> getProductByCategory(String productCategory) {
-		return null;
-//		return productRepo.getProductByCategory(productCategory)
-//				.stream()
-//				.map(product -> this.mapperModel.map(product, ProductRequest.class)) // .map(this::convertToDto)
-//				//.map(product -> this.convertToDto(product)) 
-//				.collect(Collectors.toList()); // .toList();																																																													
 	}
 
 	// Place order
@@ -161,14 +124,14 @@ public class ProductServiceImplementation implements ProductService {
 	
 	// Orders of the respected Users
 	@Override
-	public List<OrderResponseRequest> getMyOrders() {
+	public List<OrderDto> getMyOrders() {
 		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepo.findByUsername(identifier)
 				.orElseThrow(() -> new UserNotFoundException("User not found with username "+identifier));
 		List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
 		
 		return orders.stream()
-				.map(OrderResponseRequest :: new)
+				.map(OrderDto :: new) // .map(order -> mapperModel(order, OrderDto.class)
 				.toList();
 	}
 
@@ -180,17 +143,14 @@ public class ProductServiceImplementation implements ProductService {
 //	}
 	
 	
+	// All orders
 	@Override
-	public ResponseEntity<List<OrderResponseRequest>> getAllOrders() {
-		List<OrderResponseRequest> orders = orderRepo.findAll()
+	public ResponseEntity<List<OrderDto>> getAllOrders() {
+		
+		List<OrderDto> orders = orderRepo.findAll()
 				.stream()
-				.map(OrderResponseRequest :: new) //.map(order -> new OrderRepsonseRequest(order))
+				.map(OrderDto :: new) //.map(order -> new OrderRepsonseRequest(order)) // .map(order -> mapperModel(order,OrderDto.class))
 				.collect(Collectors.toList());
 		return ResponseEntity.ok(orders);
-	}
-
-	public List<Category> getCategories() {
-		List<Category> categories = categoryRepo.findAll();
-		return categories;
 	}
 }

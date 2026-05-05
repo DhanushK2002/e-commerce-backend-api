@@ -22,7 +22,6 @@ public class Order {
 
 	private LocalDateTime orderDate;
 	
-	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
