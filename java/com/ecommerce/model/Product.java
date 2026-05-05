@@ -1,6 +1,8 @@
 package com.ecommerce.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +27,7 @@ public class Product {
 	
 	@ManyToOne
 	@JoinColumn(name = "subCategoryId")
+	@JsonIgnore
 	private SubCategory subCategory;
 
 	public Product() {

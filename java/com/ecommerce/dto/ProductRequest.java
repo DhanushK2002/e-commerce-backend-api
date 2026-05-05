@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public class ProductRequest {
 
 	private Long productId;
+	
 	@NotNull(message = "Product name is required")
 	private String productName;
 
@@ -19,18 +20,15 @@ public class ProductRequest {
 	
 	@NotNull(message = "Fill up the product description")
 	private String description;
-	
-	private String productCategory;
 
 	public ProductRequest() {
 		super();
 	}
 
-	public ProductRequest(Long productId, String productName, Double price, String productCategory, Integer stock, String description) {
+	public ProductRequest(Long productId, String productName, Double price, Integer stock, String description) {
 		super();
 		this.productName = productName;
 		this.price = price;
-		this.productCategory = productCategory;
 		this.stock = stock;
 		this.description = description;
 		this.productId = productId;
@@ -75,19 +73,5 @@ public class ProductRequest {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getProductCategory() {
-		return productCategory;
-	}
-
-	public void setProductCategory(String productCategory) {
-		this.productCategory = productCategory;
-	}
-
-	@Override
-	public String toString() {
-		return "ProductRequest [productName=" + productName + ", price=" + price + ", stock=" + stock + ", description="
-				+ description + ", productCategory=" + productCategory + "]";
 	}
 }

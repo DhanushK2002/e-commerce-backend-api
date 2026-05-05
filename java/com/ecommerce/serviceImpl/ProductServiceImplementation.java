@@ -189,11 +189,8 @@ public class ProductServiceImplementation implements ProductService {
 		return ResponseEntity.ok(orders);
 	}
 
-	public ResponseEntity<?> getCategories() {
-		List<Category> cats = new ArrayList<>(Arrays.asList(
-				new Category("Category 1"),
-				new Category("Category 2")
-				));
-		return ResponseEntity.ok(cats);
+	public List<Category> getCategories() {
+		List<Category> categories = categoryRepo.findAll();
+		return categories;
 	}
 }
