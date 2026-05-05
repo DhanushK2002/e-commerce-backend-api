@@ -52,10 +52,10 @@ public class ProductServiceImplementation implements ProductService {
 	public ProductDto addProduct(ProductDto productDto, String username) {
 		User user = userRepo.findByUsername(username)
 				.orElseThrow(() -> new RuntimeException("User is not ADMIN"));
-		
-		if(user.getRoles().toString() != "ADMIN") {
-			throw new RuntimeException("You are not authorised");
-		}
+		System.out.println("User is " +user.getUsername());
+//		if(user.getRoles().toString() != "ADMIN") {
+//			throw new RuntimeException("You are not authorised");
+//		}
 		
 		Product product = mapperModel.map(productDto, Product.class);
 		Product savedProduct = productRepo.save(product);

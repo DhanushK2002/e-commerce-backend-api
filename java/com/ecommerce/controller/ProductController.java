@@ -91,21 +91,21 @@ public class ProductController {
 
 	// Add New Product
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@PostMapping("/add")
+	@PostMapping("/admin/add")
 	public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto, Authentication auth) {
 		return ResponseEntity.ok(productService.addProduct(productDto, auth.getName()));
 	}
 
 	// Update Product By ID
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@PutMapping("/update/{productId}")
+	@PutMapping("/admin/update/{productId}")
 	public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId, @RequestBody ProductDto productDto) {
 		return ResponseEntity.ok(productService.updateProduct(productId, productDto));
 	}
 
 	// Delete Product By ID
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@DeleteMapping("/delete/{productId}")
+	@DeleteMapping("/admin/delete/{productId}")
 	public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
 		productService.deleteProduct(productId);
 		return ResponseEntity.ok("Product Deleted Successfully");

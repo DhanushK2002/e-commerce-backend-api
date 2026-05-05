@@ -1,5 +1,7 @@
 package com.ecommerce.dto;
 
+import com.ecommerce.model.SubCategory;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,18 +22,21 @@ public class ProductDto {
 	
 	@NotNull(message = "Fill up the product description")
 	private String description;
+	
+	private SubCategory subCategory;
 
 	public ProductDto() {
 		super();
 	}
 
-	public ProductDto(Long productId, String productName, Double price, Integer stock, String description) {
+	public ProductDto(Long productId, String productName, Double price, Integer stock, String description, SubCategory subCategory) {
 		super();
 		this.productName = productName;
 		this.price = price;
 		this.stock = stock;
 		this.description = description;
 		this.productId = productId;
+		this.subCategory = subCategory;
 	}
 
 	
@@ -73,5 +78,13 @@ public class ProductDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public SubCategory getSubCategory() {
+		return subCategory;
+	}
+
+	public void setSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
 	}
 }
