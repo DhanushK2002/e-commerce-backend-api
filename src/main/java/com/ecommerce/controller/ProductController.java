@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.ApiResponse;
@@ -34,10 +35,20 @@ public class ProductController {
 	private CategoryServiceImpl categoryService;
 
 	@GetMapping("/category")
-	public ResponseEntity<ApiResponse<List<CategoryDto>>> getAllCategories() {
-		List<CategoryDto> categories = categoryService.getAllCategories();
+	public ResponseEntity<ApiResponse<List<CategoryDto>>> getAllCategories(@RequestParam int page,
+			@RequestParam int size, @RequestParam String sortDir, @RequestParam String sortBy) {
 
-		ApiResponse<List<CategoryDto>> response = new ApiResponse<List<CategoryDto>>(true, "Product Category Fetched successfully", categories,
+		List<CategoryDto> categories = categoryService.getAllCategories(page, size, sortDir, sortBy);
+
+		boolean success = false;
+		String message = "Sorry! no such category found";
+
+		if (categories != null) {
+			success = true;
+			message = "Product Category Fetched successfully";
+		}
+
+		ApiResponse<List<CategoryDto>> response = new ApiResponse<List<CategoryDto>>(success, message, categories,
 				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
@@ -47,7 +58,13 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<CategoryDto>> getCategoryByName(@PathVariable String categoryName) {
 		CategoryDto category = categoryService.findByCategoryName(categoryName);
 
-		ApiResponse<CategoryDto> response = new ApiResponse<CategoryDto>(true, "Respected category fetched successfully", category,
+		boolean success = false;
+		String message = "Sorry! no such category found";
+		if (category != null) {
+			success = true;
+			message = "Respected category fetched successfully";
+		}
+		ApiResponse<CategoryDto> response = new ApiResponse<CategoryDto>(success, message, category,
 				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
@@ -58,8 +75,14 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<ProductDto>> getProductById(@PathVariable Long productId) {
 		ProductDto product = productService.getProductById(productId);
 
-		ApiResponse<ProductDto> response = new ApiResponse<ProductDto>(true, "Product Fetched successfully", product,
-				LocalDateTime.now());
+		boolean success = false;
+		String message = "Sorry! no product found";
+		if (product != null) {
+			success = true;
+			message = "Product Fetched successfully";
+		}
+
+		ApiResponse<ProductDto> response = new ApiResponse<ProductDto>(success, message, product, LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
@@ -69,7 +92,14 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<List<ProductDto>>> getAllProducts() {
 		List<ProductDto> products = productService.getAllProducts();
 
-		ApiResponse<List<ProductDto>> response = new ApiResponse<List<ProductDto>>(true, "Successfully fetched", products, LocalDateTime.now());
+		boolean success = false;
+		String message = "Sorry! can't fetch products";
+		if (products != null) {
+			success = true;
+			message = "Products fetched Successfully";
+		}
+		ApiResponse<List<ProductDto>> response = new ApiResponse<List<ProductDto>>(success, message, products,
+				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
@@ -78,8 +108,14 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<SubCategoryDto>> getSubCategoryByName(@PathVariable String subCategoryName) {
 		SubCategoryDto subCategory = categoryService.getSubCategoryByName(subCategoryName);
 
-		ApiResponse<SubCategoryDto> response = new ApiResponse<SubCategoryDto>(true, "Respected Subcategory fetched successfully",
-				subCategory, LocalDateTime.now());
+		boolean success = false;
+		String message = "Sorry! respected Sub-Category not found";
+		if (subCategory != null) {
+			success = true;
+			message = "Respected Subcategory fetched successfully";
+		}
+		ApiResponse<SubCategoryDto> response = new ApiResponse<SubCategoryDto>(success, message, subCategory,
+				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
