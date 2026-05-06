@@ -1,20 +1,20 @@
 package com.ecommerce.model;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -28,31 +28,35 @@ public class User {
 	private String username;
 	
 	@Column(unique = true)
-	private String email;
-	
-	@NotBlank
-	@JsonIgnore
-	private String password;
+	private String emailId;
 	
 	@NotNull
 	private String address;
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Password passwordDetails;
 	
-	@Enumerated(EnumType.STRING)
-	private Role role;
-
-
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id")
+			)
+	private Set<Role> roles = new HashSet<>();;
+	
 	public User() {
 		super();
 	}
 
-	public User(Long userId, String username, String address, String email, String password,Role role) {
+	public User(Long userId, String username, String emailId, @NotNull String address, Password passwordDetails,
+			Set<Role> roles) {
 		super();
 		this.userId = userId;
 		this.username = username;
+		this.emailId = emailId;
 		this.address = address;
-		this.email = email;
-		this.password = password;
-		this.role = role;
+		this.passwordDetails = passwordDetails;
+		this.roles = roles;
 	}
 
 	public Long getUserId() {
@@ -71,6 +75,14 @@ public class User {
 		this.username = username;
 	}
 
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
 	public String getAddress() {
 		return address;
 	}
@@ -79,31 +91,25 @@ public class User {
 		this.address = address;
 	}
 
-	public String getEmail() {
-		return email;
+	public Password getPasswordDetails() {
+		return passwordDetails;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setPasswordDetails(Password passwordDetails) {
+		this.passwordDetails = passwordDetails;
 	}
 
-	public String getPassword() {
-		return password;
+	public Set<Role> getRoles() {
+		return roles;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private List<Order> orders;	
+	
+//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//	private List<Order> orders;	
 	
 }

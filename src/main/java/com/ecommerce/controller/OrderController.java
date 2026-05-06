@@ -1,5 +1,6 @@
 package com.ecommerce.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,29 +12,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.dto.OrderResponseRequest;
+import com.ecommerce.dto.ApiResponse;
+import com.ecommerce.dto.OrderDto;
 import com.ecommerce.service.ProductService;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderController {
 	
 	@Autowired
-	private ProductService service;
+	private ProductService productService;
 	
 	@PostMapping("/place")
-	public ResponseEntity<?> placOrder(@RequestParam Long userId, @RequestParam Integer quantity,@RequestParam Long productId){
-		return ResponseEntity.ok(service.placeOrder(quantity,userId,productId));
+	public ResponseEntity<?> placeOrder(@RequestParam Long userId, @RequestParam Long productId, @RequestParam Integer quantity){
+		String order = productService.placeOrder(userId, productId, quantity);
+		ApiResponse<?> response = new ApiResponse(true, "Order placed successfully",order,LocalDateTime.now());
+		return ResponseEntity.ok(response);
 	}
 	
 	@GetMapping("/myorders")
-	public List<OrderResponseRequest> getMyOrders(){
-		return service.getMyOrders();
+	public ResponseEntity<ApiResponse<OrderDto>> getMyOrders(){
+		List<OrderDto> orders = productService.getMyOrders();
+		ApiResponse<OrderDto> response = new ApiResponse(true, "Your Orders", orders, LocalDateTime.now());
+		return ResponseEntity.ok(response);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
 	public ResponseEntity<?> getAllOrders(){
-		return service.getAllOrders();
+		return productService.getAllOrders();
 	}
 }

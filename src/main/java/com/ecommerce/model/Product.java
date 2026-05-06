@@ -1,10 +1,14 @@
 package com.ecommerce.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Product {
@@ -17,24 +21,28 @@ public class Product {
 	
 	private Double price;
 	
-	private String productCategory;
-	
 	private String description;
 	
 	private Integer stock;
+	
+	@ManyToOne
+	@JoinColumn(name = "subCategoryId")
+	@JsonIgnore
+	private SubCategory subCategory;
 
 	public Product() {
 		super();
 	}
 
-	public Product(Long productId, String productName, Double price, String productCategory, Integer stock, String description) {
+	public Product(Long productId, String productName, Double price, String description, Integer stock,
+			SubCategory subCategory) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.price = price;
-		this.productCategory = productCategory;
-		this.stock = stock;
 		this.description = description;
+		this.stock = stock;
+		this.subCategory = subCategory;
 	}
 
 	public Long getProductId() {
@@ -61,14 +69,6 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getProductCategory() {
-		return productCategory;
-	}
-
-	public void setProductCategory(String productCategory) {
-		this.productCategory = productCategory;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -85,10 +85,11 @@ public class Product {
 		this.stock = stock;
 	}
 
-	@Override
-	public String toString() {
-		return "Product [productId=" + productId + ", productName=" + productName + ", price=" + price
-				+ ", productCategory=" + productCategory + ", description=" + description + ", stock=" + stock + "]";
+	public SubCategory getSubCategory() {
+		return subCategory;
 	}
 
+	public void setSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
+	}
 }

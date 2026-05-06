@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @Slf4j
 public class SecurityConfig {
 
@@ -34,14 +36,15 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		log.info("Security configuration");
+		log.info("Configure Security filter chain");
 
 		http.csrf(csrf -> csrf.disable()).userDetailsService(customUserDetailsService)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-						.requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+//						.requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
+//						.requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
+//						.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
 						.requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 						.requestMatchers("/orders/all").hasRole("ADMIN")
 						.requestMatchers(HttpMethod.GET,"/orders/**").hasRole("CUSTOMER").anyRequest().authenticated())

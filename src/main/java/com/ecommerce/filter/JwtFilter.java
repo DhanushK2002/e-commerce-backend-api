@@ -2,6 +2,8 @@ package com.ecommerce.filter;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +28,8 @@ public class JwtFilter extends OncePerRequestFilter{
 	
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
+	
+	private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,7 +42,6 @@ public class JwtFilter extends OncePerRequestFilter{
 		}
 		
 		String header = request.getHeader("Authorization");
-		System.out.println(header);
 		if(header != null && header.startsWith("Bearer ")) {
 			String token = header.substring(7);
 			
@@ -47,12 +50,14 @@ public class JwtFilter extends OncePerRequestFilter{
 				
 				if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 					UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+					log.info("userDetails instance {} ",userDetails.getClass().getSimpleName());
 					
 					if(jwtUtil.validateToken(token)) {
 						UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
 						auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 						
 						SecurityContextHolder.getContext().setAuthentication(auth);
+						log.info("Authentication successfull for user {} ", username);
 					}
 				}
 			}catch(Exception ex) {
