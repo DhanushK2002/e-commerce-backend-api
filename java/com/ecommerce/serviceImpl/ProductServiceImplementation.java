@@ -56,7 +56,10 @@ public class ProductServiceImplementation implements ProductService {
 //		if(user.getRoles().toString() != "ADMIN") {
 //			throw new RuntimeException("You are not authorised");
 //		}
-		
+		if(user.getRoles().toString() != "ADMIN") {
+			System.out.println("Logged in user is " +user.getRoles().toString());
+			throw new RuntimeException("You are not authorised");
+		}
 		Product product = mapperModel.map(productDto, Product.class);
 		Product savedProduct = productRepo.save(product);
 		 
