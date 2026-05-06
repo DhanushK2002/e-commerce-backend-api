@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +13,9 @@ import com.ecommerce.dto.OrderDto;
 import com.ecommerce.dto.ProductDto;
 import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.exception.UserNotFoundException;
-import com.ecommerce.model.Category;
 import com.ecommerce.model.Order;
 import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
-import com.ecommerce.repository.CategoryRepository;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.repository.UserRepository;
@@ -43,8 +40,12 @@ public class ProductServiceImplementation implements ProductService {
 
 	// List of All Products
 	@Override
-	public List<Product> getAllProducts() {
-		return productRepo.findAll();
+	public List<ProductDto> getAllProducts() {
+		List<Product> products = productRepo.findAll();
+		List<ProductDto> productsDto = products.stream()
+				.map(product -> mapperModel.map(product, ProductDto.class))
+				.toList();
+		return productsDto;
 	}
 
 	// Add New Product
@@ -53,20 +54,18 @@ public class ProductServiceImplementation implements ProductService {
 		User user = userRepo.findByUsername(username)
 				.orElseThrow(() -> new RuntimeException("User is not ADMIN"));
 		System.out.println("User is " +user.getUsername());
-//		if(user.getRoles().toString() != "ADMIN") {
-//			throw new RuntimeException("You are not authorised");
-//		}
-		if(user.getRoles().toString() != "ADMIN") {
-			System.out.println("Logged in user is " +user.getRoles().toString());
+		
+		boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getName().equals("ADMIM") || role.getName().equals("ROLE_ADMIN"));
+		
+		if(!isAdmin) {
 			throw new RuntimeException("You are not authorised");
 		}
+		
 		Product product = mapperModel.map(productDto, Product.class);
 		Product savedProduct = productRepo.save(product);
 		 
 		ProductDto productRequest = mapperModel.map(savedProduct, ProductDto.class);
 		return productRequest;
-//		Product product = convertToEntity(productDto);
-//		return convertToDto(productRepo.save(product));
 	}
 
 	// Find Product By ID
@@ -75,7 +74,6 @@ public class ProductServiceImplementation implements ProductService {
 		Product product = productRepo.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 		return mapperModel.map(product, ProductDto.class);
-		//return convertToDto(product);
 	}
 
 	// Update Product By ID
@@ -91,8 +89,6 @@ public class ProductServiceImplementation implements ProductService {
 		products.setStock(productDto.getStock());
 		
 		return mapperModel.map(productRepo.save(products), ProductDto.class);
-		
-		//return convertToDto(productRepo.save(products));
 	}
 
 	// Delete Product By ID
@@ -132,7 +128,11 @@ public class ProductServiceImplementation implements ProductService {
 		User user = userRepo.findByUsername(identifier)
 				.orElseThrow(() -> new UserNotFoundException("User not found with username "+identifier));
 		List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
-		
+//		List<OrderDto> ordersDto = orders.stream()
+//				.map(order -> mapperModel.map(order, OrderDto.class))
+//				.toList();
+//		
+//		return ordersDto;
 		return orders.stream()
 				.map(OrderDto :: new) // .map(order -> mapperModel(order, OrderDto.class)
 				.toList();

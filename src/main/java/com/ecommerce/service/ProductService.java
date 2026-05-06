@@ -6,11 +6,10 @@ import org.springframework.http.ResponseEntity;
 
 import com.ecommerce.dto.OrderDto;
 import com.ecommerce.dto.ProductDto;
-import com.ecommerce.model.Product;
 
 public interface ProductService {
 	
-	public List<Product> getAllProducts();
+	public List<ProductDto> getAllProducts();
 	
 	public ProductDto addProduct(ProductDto productDto, String username);
 	

@@ -26,7 +26,7 @@ public class OrderController {
 	@PostMapping("/place")
 	public ResponseEntity<?> placeOrder(@RequestParam Long userId, @RequestParam Long productId, @RequestParam Integer quantity){
 		String order = productService.placeOrder(userId, productId, quantity);
-		ApiResponse<?> response = new ApiResponse(true, "Order placed successfully",order,LocalDateTime.now());
+		ApiResponse<?> response = new ApiResponse<>(true, "Order placed successfully",order,LocalDateTime.now());
 		return ResponseEntity.ok(response);
 	}
 	

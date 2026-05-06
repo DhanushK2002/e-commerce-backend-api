@@ -1,6 +1,8 @@
 package com.ecommerce.dto;
 
+import com.ecommerce.model.Category;
 import com.ecommerce.model.SubCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -23,13 +25,17 @@ public class ProductDto {
 	@NotNull(message = "Fill up the product description")
 	private String description;
 	
+	@JsonIgnore
 	private SubCategory subCategory;
+
+	@JsonIgnore
+	private Category category;
 
 	public ProductDto() {
 		super();
 	}
 
-	public ProductDto(Long productId, String productName, Double price, Integer stock, String description, SubCategory subCategory) {
+	public ProductDto(Long productId, String productName, Double price, Integer stock, String description, SubCategory subCategory, Category category) {
 		super();
 		this.productName = productName;
 		this.price = price;
@@ -37,6 +43,7 @@ public class ProductDto {
 		this.description = description;
 		this.productId = productId;
 		this.subCategory = subCategory;
+		this.category = category;
 	}
 
 	
@@ -87,4 +94,14 @@ public class ProductDto {
 	public void setSubCategory(SubCategory subCategory) {
 		this.subCategory = subCategory;
 	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+	
+	
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +20,6 @@ import com.ecommerce.dto.ApiResponse;
 import com.ecommerce.dto.CategoryDto;
 import com.ecommerce.dto.ProductDto;
 import com.ecommerce.dto.SubCategoryDto;
-import com.ecommerce.model.Category;
-import com.ecommerce.model.Product;
 import com.ecommerce.serviceImpl.CategoryServiceImpl;
 import com.ecommerce.serviceImpl.ProductServiceImplementation;
 
@@ -37,20 +34,20 @@ public class ProductController {
 	private CategoryServiceImpl categoryService;
 
 	@GetMapping("/category")
-	public ResponseEntity<?> getAllCategories() {
+	public ResponseEntity<ApiResponse<List<CategoryDto>>> getAllCategories() {
 		List<CategoryDto> categories = categoryService.getAllCategories();
 
-		ApiResponse<CategoryDto> response = new ApiResponse(true, "Product Category Fetched successfully", categories,
+		ApiResponse<List<CategoryDto>> response = new ApiResponse<List<CategoryDto>>(true, "Product Category Fetched successfully", categories,
 				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/category/{categoryName}")
-	public ResponseEntity<?> getCategoryByName(@PathVariable String categoryName) {
+	public ResponseEntity<ApiResponse<CategoryDto>> getCategoryByName(@PathVariable String categoryName) {
 		CategoryDto category = categoryService.findByCategoryName(categoryName);
 
-		ApiResponse<Category> response = new ApiResponse(true, "Respected category fetched successfully", category,
+		ApiResponse<CategoryDto> response = new ApiResponse<CategoryDto>(true, "Respected category fetched successfully", category,
 				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
@@ -61,7 +58,7 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<ProductDto>> getProductById(@PathVariable Long productId) {
 		ProductDto product = productService.getProductById(productId);
 
-		ApiResponse<ProductDto> response = new ApiResponse(true, "Product Fetched successfully", product,
+		ApiResponse<ProductDto> response = new ApiResponse<ProductDto>(true, "Product Fetched successfully", product,
 				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
@@ -69,10 +66,10 @@ public class ProductController {
 
 	// List of All Products
 	@GetMapping
-	public ResponseEntity<ApiResponse<Product>> getAllProducts() {
-		List<Product> product = productService.getAllProducts();
+	public ResponseEntity<ApiResponse<List<ProductDto>>> getAllProducts() {
+		List<ProductDto> products = productService.getAllProducts();
 
-		ApiResponse<Product> response = new ApiResponse(true, "Successfully fetched", product, LocalDateTime.now());
+		ApiResponse<List<ProductDto>> response = new ApiResponse<List<ProductDto>>(true, "Successfully fetched", products, LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
@@ -81,7 +78,7 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<SubCategoryDto>> getSubCategoryByName(@PathVariable String subCategoryName) {
 		SubCategoryDto subCategory = categoryService.getSubCategoryByName(subCategoryName);
 
-		ApiResponse<SubCategoryDto> response = new ApiResponse(true, "Respected Subcategory fetched successfully",
+		ApiResponse<SubCategoryDto> response = new ApiResponse<SubCategoryDto>(true, "Respected Subcategory fetched successfully",
 				subCategory, LocalDateTime.now());
 
 		return ResponseEntity.ok(response);

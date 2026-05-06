@@ -3,10 +3,12 @@ package com.ecommerce.dto;
 import java.util.List;
 
 import com.ecommerce.model.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class SubCategoryDto {
 	private Long subCategoryId;
 	private String subCategoryName;
+	@JsonIgnore
 	private Category category;
 	private List<ProductDto> products;
 
