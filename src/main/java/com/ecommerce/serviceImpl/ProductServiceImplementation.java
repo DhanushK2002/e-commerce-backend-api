@@ -1,16 +1,18 @@
 package com.ecommerce.serviceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.OrderDto;
-import com.ecommerce.dto.ProductDto;
+import com.ecommerce.dto.ApiResponse;
+import com.ecommerce.dto.OrderRespone;
+import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.exception.UserNotFoundException;
 import com.ecommerce.model.Order;
@@ -26,82 +28,103 @@ import jakarta.transaction.Transactional;
 @Service
 public class ProductServiceImplementation implements ProductService {
 
-	@Autowired
-	private ProductRepository productRepo;
+	private final ProductRepository productRepo;
 
-	@Autowired
-	private UserRepository userRepo;
+	
+	private final UserRepository userRepo;
 
-	@Autowired
-	private ModelMapper mapperModel;
+	
+	private final ModelMapper mapperModel;
 
-	@Autowired
-	private OrderRepository orderRepo;
+	
+	private final OrderRepository orderRepo;
+	
 
-	// List of All Products
-	@Override
-	public List<ProductDto> getAllProducts() {
-		List<Product> products = productRepo.findAll();
-		List<ProductDto> productsDto = products.stream()
-				.map(product -> mapperModel.map(product, ProductDto.class))
-				.toList();
-		return productsDto;
+	public ProductServiceImplementation(ProductRepository productRepo, UserRepository userRepo, ModelMapper mapperModel,
+			OrderRepository orderRepo) {
+		super();
+		this.productRepo = productRepo;
+		this.userRepo = userRepo;
+		this.mapperModel = mapperModel;
+		this.orderRepo = orderRepo;
 	}
 
-	// Add New Product
+	// List of All Products //	Done
 	@Override
-	public ProductDto addProduct(ProductDto productDto, String username) {
-		User user = userRepo.findByUsername(username)
-				.orElseThrow(() -> new RuntimeException("User is not ADMIN"));
-		System.out.println("User is " +user.getUsername());
+	public ApiResponse<List<ProductResponse>> getAllProducts() {
+
+		List<Product> products = productRepo.findAll();
+		if (products == null)
+			throw new ResourceNotFoundException("Database is empty");
+
+		List<ProductResponse> productsResponse = products.stream()
+				.map(product -> mapperModel.map(product, ProductResponse.class)).toList();
 		
-		boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getName().equals("ADMIM") || role.getName().equals("ROLE_ADMIN"));
-		
-		if(!isAdmin) {
-			throw new RuntimeException("You are not authorised");
+		return new ApiResponse<List<ProductResponse>>(true, "List of Products", productsResponse, LocalDateTime.now());
+	}
+
+	// Add New Product // Done
+	@Override
+	public ApiResponse<Void> addProduct(Product product, String username) {
+		User user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User is not ADMIN"));
+
+		System.out.println("User is " + user.getUsername());
+
+		boolean isAdmin = user.getRoles().stream()
+				.anyMatch(role -> role.getName().equals("ADMIN") || role.getName().equals("ROLE_ADMIN"));
+
+		if (!isAdmin) {
+			throw new UserNotFoundException("You are not authorised");
 		}
-		
-		Product product = mapperModel.map(productDto, Product.class);
-		Product savedProduct = productRepo.save(product);
-		 
-		ProductDto productRequest = mapperModel.map(savedProduct, ProductDto.class);
-		return productRequest;
+
+		productRepo.save(product);
+		return new ApiResponse<Void>(true, "Product Saved Successfully", LocalDateTime.now());
+	}
+
+	// Update Product By ID // Done
+	@Override
+	public ApiResponse<ProductResponse> updateProduct(Long productId, ProductRequest request) {
+		Product products = productRepo.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+		products.setProductName(request.getProductName());
+		products.setPrice(request.getPrice());
+		products.setDescription(request.getDescription());
+		products.setStock(request.getStock());
+
+		ProductResponse productResponse = mapperModel.map(productRepo.save(products), ProductResponse.class);
+
+		return new ApiResponse<ProductResponse>(true, "Product Updated Successfully", productResponse,
+				LocalDateTime.now());
+	}
+
+	// Delete Product By ID // Done
+	@Override
+	public ApiResponse<Void> deleteProduct(Long productId) {
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product Id Not Found"));
+
+		productRepo.delete(product);
+
+		return new ApiResponse<Void>(true, "Product Deleted Successfully", LocalDateTime.now());
 	}
 
 	// Find Product By ID
 	@Override
-	public ProductDto getProductById(Long productId) {
+	public ApiResponse<ProductResponse> getProductById(Long productId) {
 		Product product = productRepo.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-		return mapperModel.map(product, ProductDto.class);
-	}
+		ProductResponse productResponse = mapperModel.map(product, ProductResponse.class);
 
-	// Update Product By ID
-	@Override
-	public ProductDto updateProduct(Long productId, ProductDto productDto) {
-		Product products = productRepo.findById(productId)
-				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-		products.setProductName(productDto.getProductName());
-		products.setPrice(productDto.getPrice());
-		products.setDescription(productDto.getDescription());
-		
-		products.setStock(productDto.getStock());
-		
-		return mapperModel.map(productRepo.save(products), ProductDto.class);
-	}
-
-	// Delete Product By ID
-	@Override
-	public void deleteProduct(Long productId) {
-		productRepo.deleteById(productId);
+		return new ApiResponse<ProductResponse>(true, "Product Found!", productResponse, LocalDateTime.now());
 	}
 
 	// Place order
 	@Transactional
 	@Override
 	public String placeOrder(Long userId, Long productId, Integer quantity) {
-		Product product = productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 		if (product.getStock() <= 0) {
 			throw new RuntimeException("Out of stock, available stock is " + product.getStock());
 		}
@@ -112,29 +135,28 @@ public class ProductServiceImplementation implements ProductService {
 
 		Order newOrder = new Order(user, product, quantity);
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		
-		if(user.getUsername().equals(username))
+
+		if (user.getUsername().equals(username))
 			orderRepo.save(newOrder);
 		else
 			throw new RuntimeException("Not the same user");
 
 		return "Order Placed for the item " + product.getProductName();
 	}
-	
+
 	// Orders of the respected Users
 	@Override
-	public List<OrderDto> getMyOrders() {
+	public List<OrderRespone> getMyOrders() {
 		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepo.findByUsername(identifier)
-				.orElseThrow(() -> new UserNotFoundException("User not found with username "+identifier));
+				.orElseThrow(() -> new UserNotFoundException("User not found with username " + identifier));
 		List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
 //		List<OrderDto> ordersDto = orders.stream()
 //				.map(order -> mapperModel.map(order, OrderDto.class))
 //				.toList();
 //		
 //		return ordersDto;
-		return orders.stream()
-				.map(OrderDto :: new) // .map(order -> mapperModel(order, OrderDto.class)
+		return orders.stream().map(OrderRespone::new) // .map(order -> mapperModel(order, OrderDto.class)
 				.toList();
 	}
 
@@ -144,15 +166,15 @@ public class ProductServiceImplementation implements ProductService {
 //				.orElseThrow(() -> new RuntimeException("User not found with email "+identifier));
 //		return orderRepo.findByUser_UserId(user.getUserId());
 //	}
-	
-	
+
 	// All orders
 	@Override
-	public ResponseEntity<List<OrderDto>> getAllOrders() {
-		
-		List<OrderDto> orders = orderRepo.findAll()
-				.stream()
-				.map(OrderDto :: new) //.map(order -> new OrderRepsonseRequest(order)) // .map(order -> mapperModel(order,OrderDto.class))
+	public ResponseEntity<List<OrderRespone>> getAllOrders() {
+
+		List<OrderRespone> orders = orderRepo.findAll().stream().map(OrderRespone::new) // .map(order -> new
+																						// OrderRepsonseRequest(order))
+																						// // .map(order ->
+																						// mapperModel(order,OrderDto.class))
 				.collect(Collectors.toList());
 		return ResponseEntity.ok(orders);
 	}

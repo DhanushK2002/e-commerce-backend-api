@@ -2,7 +2,6 @@ package com.ecommerce.controller;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.dto.LoginDto;
-import com.ecommerce.dto.RegisterDto;
+import com.ecommerce.dto.LoginResponse;
+import com.ecommerce.dto.RegisterResponse;
 import com.ecommerce.serviceImpl.UserServiceImplementation;
 import com.ecommerce.util.JwtUtil;
 
@@ -22,22 +21,26 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-	@Autowired
-	private UserServiceImplementation userService;
+	private final UserServiceImplementation userService;
 	
-	@Autowired
-	private AuthenticationManager authManager;
+	private final AuthenticationManager authManager;
 	
-	@Autowired
-	private JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil;
+	
+	public AuthController(UserServiceImplementation userService, AuthenticationManager authManager, JwtUtil jwtUtil) {
+		super();
+		this.userService = userService;
+		this.authManager = authManager;
+		this.jwtUtil = jwtUtil;
+	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@Valid @RequestBody RegisterDto request) {
+	public ResponseEntity<?> register(@Valid @RequestBody RegisterResponse request) {
 		return userService.register(request);
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginDto request) {
+	public ResponseEntity<?> login(@RequestBody LoginResponse request) {
 		authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
 		String token = jwtUtil.generateToken(request.getUsername());

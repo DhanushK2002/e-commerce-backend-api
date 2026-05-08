@@ -2,16 +2,16 @@ package com.ecommerce.dto;
 
 import java.util.List;
 
-public class CategoryDto {
+public class CategoryResponse {
 	private Long categoryId;
 	private String categoryName;
 	private List<SubCategoryDto> subCategories;
 
-	public CategoryDto() {
+	public CategoryResponse() {
 		super();
 	}
 
-	public CategoryDto(Long categoryId, String categoryName, List<SubCategoryDto> subCategories) {
+	public CategoryResponse(Long categoryId, String categoryName, List<SubCategoryDto> subCategories) {
 		super();
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;

@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Product {
@@ -17,12 +19,18 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long productId;
 	
+	@NotNull(message = "Product name is required")
 	private String productName;
 	
+	@NotNull(message = "Product price is required")
+	@Min(1)
 	private Double price;
 	
+	@NotNull(message = "Fill up the product description")
 	private String description;
 	
+	@NotNull(message = "Min Stock should be added")
+	@Min(1)
 	private Integer stock;
 	
 	@ManyToOne

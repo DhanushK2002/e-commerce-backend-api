@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.RegisterDto;
+import com.ecommerce.dto.RegisterResponse;
 import com.ecommerce.model.Password;
 import com.ecommerce.model.Role;
 import com.ecommerce.model.User;
@@ -30,7 +30,7 @@ public class UserServiceImplementation implements UserService {
 	private RoleRepository roleRepo;
 
 	@Override
-	public ResponseEntity<?> register(RegisterDto request) {
+	public ResponseEntity<?> register(RegisterResponse request) {
 
 		userRepo.findByUsername(request.getUsername()).ifPresent(u -> {
 			throw new RuntimeException("User already exist");

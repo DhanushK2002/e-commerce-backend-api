@@ -1,14 +1,15 @@
 package com.ecommerce.exception;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import com.ecommerce.dto.ApiResponse;
+
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(RuntimeException.class)
@@ -17,21 +18,22 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex){
-		Map<String, Object> error = new HashMap<>();
-		error.put("Status", HttpStatus.NOT_FOUND.value());
-		error.put("Message", ex.getMessage());
+	public ResponseEntity<ApiResponse<String>> handleNotFound(ResourceNotFoundException ex){
+//		Map<String, Object> error = new HashMap<>();
+//		error.put("Status", HttpStatus.NOT_FOUND.value());
+//		error.put("Message", ex.getMessage());
 		
-		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+		ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null, LocalDateTime.now());
+		return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(UserNotFoundException.class)
-	public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex){
-		Map<String, Object> error = new HashMap<>();
-		error.put("Status", HttpStatus.NOT_FOUND.value());
-		error.put("Message", ex.getMessage());
+	public ResponseEntity<ApiResponse<String>> handleUserNotFound(UserNotFoundException ex){
+//		Map<String, Object> error = new HashMap<>();
+//		error.put("Status", HttpStatus.NOT_FOUND.value());
+//		error.put("Message", ex.getMessage());
 		
-		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+		ApiResponse<String> response = new ApiResponse<String>(false, ex.getMessage(), null, LocalDateTime.now());
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
-	
 }

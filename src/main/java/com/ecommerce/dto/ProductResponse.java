@@ -4,38 +4,22 @@ import com.ecommerce.model.Category;
 import com.ecommerce.model.SubCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-
-public class ProductDto {
-
+public class ProductResponse {
 	private Long productId;
-	
-	@NotNull(message = "Product name is required")
 	private String productName;
-
-	@NotNull(message = "Product price is required")
-	@Min(1)
 	private Double price;
-	
-	@NotNull(message = "Min Stock should be added")
-	@Min(1)
 	private Integer stock;
-	
-	@NotNull(message = "Fill up the product description")
 	private String description;
-	
 	@JsonIgnore
 	private SubCategory subCategory;
-
 	@JsonIgnore
 	private Category category;
 
-	public ProductDto() {
+	public ProductResponse() {
 		super();
 	}
 
-	public ProductDto(Long productId, String productName, Double price, Integer stock, String description, SubCategory subCategory, Category category) {
+	public ProductResponse(Long productId, String productName, Double price, Integer stock, String description, SubCategory subCategory, Category category) {
 		super();
 		this.productName = productName;
 		this.price = price;

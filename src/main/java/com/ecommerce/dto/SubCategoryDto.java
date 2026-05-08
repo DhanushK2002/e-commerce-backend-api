@@ -10,13 +10,13 @@ public class SubCategoryDto {
 	private String subCategoryName;
 	@JsonIgnore
 	private Category category;
-	private List<ProductDto> products;
+	private List<ProductResponse> products;
 
 	public SubCategoryDto() {
 		super();
 	}
 
-	public SubCategoryDto(Long subCategoryId, String subCategoryName, Category category, List<ProductDto> products) {
+	public SubCategoryDto(Long subCategoryId, String subCategoryName, Category category, List<ProductResponse> products) {
 		super();
 		this.subCategoryId = subCategoryId;
 		this.subCategoryName = subCategoryName;
@@ -48,11 +48,11 @@ public class SubCategoryDto {
 		this.category = category;
 	}
 
-	public List<ProductDto> getProducts() {
+	public List<ProductResponse> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<ProductDto> products) {
+	public void setProducts(List<ProductResponse> products) {
 		this.products = products;
 	}
 }

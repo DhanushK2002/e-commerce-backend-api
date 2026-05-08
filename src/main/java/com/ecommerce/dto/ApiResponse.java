@@ -11,6 +11,12 @@ public class ApiResponse<T> {
 	
 	private LocalDateTime timestamp;
 
+	public ApiResponse(boolean success, String message, LocalDateTime timestamp) {
+		super();
+		this.success = success;
+		this.message = message;
+		this.timestamp = timestamp;
+	}
 	public ApiResponse(boolean success, String message, T data, LocalDateTime timestamp) {
 		super();
 		this.success = success;

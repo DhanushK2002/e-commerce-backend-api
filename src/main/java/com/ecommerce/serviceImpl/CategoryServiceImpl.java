@@ -1,57 +1,70 @@
 package com.ecommerce.serviceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.CategoryDto;
+import com.ecommerce.dto.ApiResponse;
+import com.ecommerce.dto.CategoryResponse;
 import com.ecommerce.dto.SubCategoryDto;
+import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.model.Category;
 import com.ecommerce.model.SubCategory;
 import com.ecommerce.repository.CategoryRepository;
 import com.ecommerce.repository.SubCategoryRepository;
 import com.ecommerce.service.CategoryService;
 
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-	@Autowired
-	private CategoryRepository categoryRepo;
+	private final CategoryRepository categoryRepo;
+	private final SubCategoryRepository subCatRepo;
+	private final ModelMapper mapperModel;
 
-	@Autowired
-	private SubCategoryRepository subCatRepo;
-
-	@Autowired
-	private ModelMapper mapperModel;
+	public CategoryServiceImpl(CategoryRepository categoryRepo, SubCategoryRepository subCatRepo,
+			ModelMapper mapperModel) {
+		super();
+		this.categoryRepo = categoryRepo;
+		this.subCatRepo = subCatRepo;
+		this.mapperModel = mapperModel;
+	}
 
 	@Override
-	public List<CategoryDto> getAllCategories(int page, int size, String sortDir, String sortBy) {
+	public ApiResponse<List<CategoryResponse>> getAllCategories(int page, int size, String sortDir, String sortBy) {
 		
 		Sort.Direction direction = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 		List<Category> categories = categoryRepo.findAll(pageable).getContent();
 
-		return categories.stream().map(category -> mapperModel.map(category, CategoryDto.class))
+		if(categories == null) 
+			throw new ResourceNotFoundException("Category Not Found");
+		
+		List<CategoryResponse> categoryResponse =  categories.stream()
+				.map(category -> mapperModel.map(category, CategoryResponse.class))
 				.collect(Collectors.toList());
-	
+		
+		return new ApiResponse<List<CategoryResponse>>(true, "Product Categories", categoryResponse,LocalDateTime.now());
 	}
 
-	public CategoryDto findByCategoryName(String categoryName) {
+	@Override
+	public CategoryResponse findByCategoryName(String categoryName) {
 		
 		Optional<Category> category = categoryRepo.findByCategoryName(categoryName);
 
-		CategoryDto categorydto = mapperModel.map(category, CategoryDto.class);
+		CategoryResponse categorydto = mapperModel.map(category, CategoryResponse.class);
 		return categorydto;
 	
 	}
 
+	@Override
 	public SubCategoryDto getSubCategoryByName(String subCategoryName) {
 
 		Optional<SubCategory> subCategory = subCatRepo.findBySubCategoryName(subCategoryName);

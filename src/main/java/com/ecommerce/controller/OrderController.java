@@ -3,7 +3,6 @@ package com.ecommerce.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,16 +12,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.OrderDto;
+import com.ecommerce.dto.OrderRespone;
 import com.ecommerce.service.ProductService;
+
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
 	
-	@Autowired
-	private ProductService productService;
+	private final ProductService productService;
 	
+	public OrderController(ProductService productService) {
+		super();
+		this.productService = productService;
+	}
+
 	@PostMapping("/place")
 	public ResponseEntity<?> placeOrder(@RequestParam Long userId, @RequestParam Long productId, @RequestParam Integer quantity){
 		String order = productService.placeOrder(userId, productId, quantity);
@@ -31,15 +35,17 @@ public class OrderController {
 	}
 	
 	@GetMapping("/myorders")
-	public ResponseEntity<ApiResponse<OrderDto>> getMyOrders(){
-		List<OrderDto> orders = productService.getMyOrders();
-		ApiResponse<OrderDto> response = new ApiResponse(true, "Your Orders", orders, LocalDateTime.now());
+	public ResponseEntity<ApiResponse<OrderRespone>> getMyOrders(){
+		List<OrderRespone> orders = productService.getMyOrders();
+		ApiResponse<OrderRespone> response = new ApiResponse(true, "Your Orders", orders, LocalDateTime.now());
 		return ResponseEntity.ok(response);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
-	public ResponseEntity<?> getAllOrders(){
-		return productService.getAllOrders();
+	public ResponseEntity<ApiResponse<?>> getAllOrders(){
+		ResponseEntity<?> allOrders = productService.getAllOrders();
+		ApiResponse<?> response = new ApiResponse(true, "All orders", allOrders, LocalDateTime.now());
+		return ResponseEntity.ok(response);
 	}
 }

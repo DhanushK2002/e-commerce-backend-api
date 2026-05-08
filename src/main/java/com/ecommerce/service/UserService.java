@@ -2,8 +2,8 @@ package com.ecommerce.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.ecommerce.dto.RegisterDto;
+import com.ecommerce.dto.RegisterResponse;
 
 public interface UserService {
-	public ResponseEntity<?> register(RegisterDto request);
+	public ResponseEntity<?> register(RegisterResponse request);
 }

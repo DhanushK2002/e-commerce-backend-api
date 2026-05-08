@@ -3,7 +3,6 @@ package com.ecommerce.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.CategoryDto;
-import com.ecommerce.dto.ProductDto;
+import com.ecommerce.dto.CategoryResponse;
+import com.ecommerce.dto.ProductRequest;
+import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.dto.SubCategoryDto;
+import com.ecommerce.model.Product;
 import com.ecommerce.serviceImpl.CategoryServiceImpl;
 import com.ecommerce.serviceImpl.ProductServiceImplementation;
 
@@ -28,35 +29,24 @@ import com.ecommerce.serviceImpl.ProductServiceImplementation;
 @RequestMapping("/api/products")
 public class ProductController {
 
-	@Autowired
-	private ProductServiceImplementation productService;
+	private final ProductServiceImplementation productService;
+	private final CategoryServiceImpl categoryService;
 
-	@Autowired
-	private CategoryServiceImpl categoryService;
+	public ProductController(ProductServiceImplementation productService, CategoryServiceImpl categoryService) {
+		super();
+		this.productService = productService;
+		this.categoryService = categoryService;
+	}
 
 	@GetMapping("/category")
-	public ResponseEntity<ApiResponse<List<CategoryDto>>> getAllCategories(@RequestParam int page,
+	public ApiResponse<List<CategoryResponse>> getAllCategories(@RequestParam int page,
 			@RequestParam int size, @RequestParam String sortDir, @RequestParam String sortBy) {
-
-		List<CategoryDto> categories = categoryService.getAllCategories(page, size, sortDir, sortBy);
-
-		boolean success = false;
-		String message = "Sorry! no such category found";
-
-		if (categories != null) {
-			success = true;
-			message = "Product Category Fetched successfully";
-		}
-
-		ApiResponse<List<CategoryDto>> response = new ApiResponse<List<CategoryDto>>(success, message, categories,
-				LocalDateTime.now());
-
-		return ResponseEntity.ok(response);
+		return categoryService.getAllCategories(page, size, sortDir, sortBy);
 	}
 
 	@GetMapping("/category/{categoryName}")
-	public ResponseEntity<ApiResponse<CategoryDto>> getCategoryByName(@PathVariable String categoryName) {
-		CategoryDto category = categoryService.findByCategoryName(categoryName);
+	public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryByName(@PathVariable String categoryName) {
+		CategoryResponse category = categoryService.findByCategoryName(categoryName);
 
 		boolean success = false;
 		String message = "Sorry! no such category found";
@@ -64,7 +54,7 @@ public class ProductController {
 			success = true;
 			message = "Respected category fetched successfully";
 		}
-		ApiResponse<CategoryDto> response = new ApiResponse<CategoryDto>(success, message, category,
+		ApiResponse<CategoryResponse> response = new ApiResponse<CategoryResponse>(success, message, category,
 				LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
@@ -72,36 +62,14 @@ public class ProductController {
 
 	// Find Product By ID
 	@GetMapping("/{productId}")
-	public ResponseEntity<ApiResponse<ProductDto>> getProductById(@PathVariable Long productId) {
-		ProductDto product = productService.getProductById(productId);
-
-		boolean success = false;
-		String message = "Sorry! no product found";
-		if (product != null) {
-			success = true;
-			message = "Product Fetched successfully";
-		}
-
-		ApiResponse<ProductDto> response = new ApiResponse<ProductDto>(success, message, product, LocalDateTime.now());
-
-		return ResponseEntity.ok(response);
+	public ApiResponse<ProductResponse> getProductById(@PathVariable Long productId) {
+		return productService.getProductById(productId);
 	}
 
 	// List of All Products
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<ProductDto>>> getAllProducts() {
-		List<ProductDto> products = productService.getAllProducts();
-
-		boolean success = false;
-		String message = "Sorry! can't fetch products";
-		if (products != null) {
-			success = true;
-			message = "Products fetched Successfully";
-		}
-		ApiResponse<List<ProductDto>> response = new ApiResponse<List<ProductDto>>(success, message, products,
-				LocalDateTime.now());
-
-		return ResponseEntity.ok(response);
+	public ApiResponse<List<ProductResponse>> getAllProducts() {
+		return  productService.getAllProducts();
 	}
 
 	@GetMapping("/subcategory/{subCategoryName}")
@@ -125,22 +93,22 @@ public class ProductController {
 	// Add New Product
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/admin/add")
-	public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto, Authentication auth) {
-		return ResponseEntity.ok(productService.addProduct(productDto, auth.getName()));
+	public ApiResponse<Void> addProduct(@RequestBody Product product, Authentication auth) {
+		return productService.addProduct(product, auth.getName());
 	}
 
 	// Update Product By ID
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/admin/update/{productId}")
-	public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId, @RequestBody ProductDto productDto) {
-		return ResponseEntity.ok(productService.updateProduct(productId, productDto));
+	public ApiResponse<ProductResponse> updateProduct(@PathVariable Long productId,
+			@RequestBody ProductRequest request) {
+		return productService.updateProduct(productId, request);
 	}
 
 	// Delete Product By ID
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/admin/delete/{productId}")
-	public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
-		productService.deleteProduct(productId);
-		return ResponseEntity.ok("Product Deleted Successfully");
+	public ApiResponse<Void> deleteProduct(@PathVariable Long productId) {
+		return productService.deleteProduct(productId);
 	}
 }

@@ -1,25 +1,12 @@
 package com.ecommerce.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-
 public class ProductRequest {
 
 	private Long productId;
-	@NotNull(message = "Product name is required")
 	private String productName;
-
-	@NotNull(message = "Product price is required")
-	@Min(1)
 	private Double price;
-	
-	@NotNull(message = "Min Stock should be added")
-	@Min(1)
 	private Integer stock;
-	
-	@NotNull(message = "Fill up the product description")
 	private String description;
-	
 	private String productCategory;
 
 	public ProductRequest() {
@@ -36,7 +23,6 @@ public class ProductRequest {
 		this.productId = productId;
 	}
 
-	
 	public Long getProductId() {
 		return productId;
 	}
