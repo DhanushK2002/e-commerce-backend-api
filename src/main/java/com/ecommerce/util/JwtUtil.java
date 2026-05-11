@@ -18,22 +18,26 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 	
-//	@Value("${jwt.secret}")
-	private String secretKey = "";
+	@Value("${jwt.secret}")
+	private String secretKey;
 	
 	@Value("${jwt.expirationMs}")
 	private long expirationMs;
 	
-	public JwtUtil() {
-		// Generates own key
-		 try {
-			KeyGenerator key = KeyGenerator.getInstance("HmacSHA256");
-			SecretKey sk = key.generateKey();
-			secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-		 } catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		 }
-	}
+//	public JwtUtil() {
+//		// Generates own key
+//		 try {
+//			KeyGenerator key = KeyGenerator.getInstance("HmacSHA256");
+//			SecretKey sk = key.generateKey();
+//			secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+//			String secretKeyDecoded = Base64.getDecoder().decode(secretKey).toString();
+//			System.out.println("Secret Key :" +secretKey);
+//			System.out.println("Decoded Secret Key :"+secretKeyDecoded);
+//			
+//		 } catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		 }
+//	}
 	
 	public String generateToken(String username) {
 		return Jwts.builder()

@@ -11,42 +11,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.CategoryResponse;
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.dto.ProductResponse;
-import com.ecommerce.dto.SubCategoryDto;
-import com.ecommerce.model.Product;
-import com.ecommerce.serviceImpl.CategoryServiceImpl;
+import com.ecommerce.service.ProductService;
 import com.ecommerce.serviceImpl.ProductServiceImplementation;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
-	private final ProductServiceImplementation productService;
-	private final CategoryServiceImpl categoryService;
+	private final ProductService productService;
 
-	public ProductController(ProductServiceImplementation productService, CategoryServiceImpl categoryService) {
+	public ProductController(ProductServiceImplementation productService) {
 		super();
 		this.productService = productService;
-		this.categoryService = categoryService;
 	}
-
-	@GetMapping("/category")
-	public ApiResponse<List<CategoryResponse>> getAllCategories(@RequestParam int page,
-			@RequestParam int size, @RequestParam String sortDir, @RequestParam String sortBy) {
-		return categoryService.getAllCategories(page, size, sortDir, sortBy);
-	}
-
-	@GetMapping("/category/{categoryName}")
-	public ApiResponse<CategoryResponse> findCategoryByName(@PathVariable String categoryName) {
-		return categoryService.findByCategoryName(categoryName);
-	}
-
+	
 	// Find Product By ID
 	@GetMapping("/{productId}")
 	public ApiResponse<ProductResponse> getProductById(@PathVariable Long productId) {
@@ -59,18 +42,13 @@ public class ProductController {
 		return  productService.getAllProducts();
 	}
 
-	@GetMapping("/subcategory/{subCategoryName}")
-	public ApiResponse<SubCategoryDto> getSubCategoryByName(@PathVariable String subCategoryName) {	
-		return categoryService.getSubCategoryByName(subCategoryName);
-	}
-
 	// ADMIN
 
 	// Add New Product
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/admin/add")
-	public ApiResponse<Void> addProduct(@RequestBody Product product, Authentication auth) {
-		return productService.addProduct(product, auth.getName());
+	public ApiResponse<Void> addProduct(@RequestBody ProductRequest productRequest, Authentication auth) {
+		return productService.addProduct(productRequest, auth.getName());
 	}
 
 	// Update Product By ID

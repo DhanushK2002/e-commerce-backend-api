@@ -14,7 +14,7 @@ public interface ProductService {
 	
 	public ApiResponse<List<ProductResponse>> getAllProducts();
 	
-	public ApiResponse<Void> addProduct(Product product, String username);
+	public ApiResponse<Void> addProduct(ProductRequest productRequest, String username);
 	
 	public ApiResponse<ProductResponse> updateProduct(Long productId, ProductRequest request);
 	

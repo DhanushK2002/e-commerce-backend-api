@@ -49,7 +49,7 @@ public class ProductServiceImplementation implements ProductService {
 		this.orderRepo = orderRepo;
 	}
 
-	// List of All Products //	Done
+	// List of All Products
 	@Override
 	public ApiResponse<List<ProductResponse>> getAllProducts() {
 
@@ -63,9 +63,9 @@ public class ProductServiceImplementation implements ProductService {
 		return new ApiResponse<List<ProductResponse>>(true, "List of Products", productsResponse, LocalDateTime.now());
 	}
 
-	// Add New Product // Done
+	// Add New Product 
 	@Override
-	public ApiResponse<Void> addProduct(Product product, String username) {
+	public ApiResponse<Void> addProduct(ProductRequest productRequest, String username) {
 		User user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User is not ADMIN"));
 
 		System.out.println("User is " + user.getUsername());
@@ -77,11 +77,12 @@ public class ProductServiceImplementation implements ProductService {
 			throw new UserNotFoundException("You are not authorised");
 		}
 
+		Product product = mapperModel.map(productRequest, Product.class);
 		productRepo.save(product);
 		return new ApiResponse<Void>(true, "Product Saved Successfully", LocalDateTime.now());
 	}
 
-	// Update Product By ID // Done
+	// Update Product By ID 
 	@Override
 	public ApiResponse<ProductResponse> updateProduct(Long productId, ProductRequest request) {
 		Product products = productRepo.findById(productId)
@@ -98,7 +99,7 @@ public class ProductServiceImplementation implements ProductService {
 				LocalDateTime.now());
 	}
 
-	// Delete Product By ID // Done
+	// Delete Product By ID
 	@Override
 	public ApiResponse<Void> deleteProduct(Long productId) {
 		Product product = productRepo.findById(productId)

@@ -17,8 +17,8 @@ import com.ecommerce.dto.SubCategoryDto;
 import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.model.Category;
 import com.ecommerce.model.SubCategory;
-import com.ecommerce.repository.CategoryRepository;
 import com.ecommerce.repository.SubCategoryRepository;
+import com.ecommerce.repository.CategoryRepository;
 import com.ecommerce.service.CategoryService;
 
 
@@ -68,16 +68,19 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public ApiResponse<SubCategoryDto> getSubCategoryByName(String subCategoryName) {
+	public ApiResponse<List<SubCategoryDto>> getSubCategoryByName(String subCategoryName) {
 
-		Optional<SubCategory> subCategory = subCatRepo.findBySubCategoryName(subCategoryName);
-		
-		if(subCategory == null) {
+		List<SubCategory> subCategories = subCatRepo.findBySubCategoryName(subCategoryName);
+		System.out.println("Sub categories = "+subCategories);
+		if(subCategories.isEmpty()) {
 			throw new ResourceNotFoundException("Sorry! respected Sub-Category not found");
 		}
 
-		SubCategoryDto subCatDto = mapperModel.map(subCategory, SubCategoryDto.class);
-		return new ApiResponse<SubCategoryDto>(true, "Respected Subcategory fetched successfully",subCatDto,LocalDateTime.now());
+		List<SubCategoryDto> subCatDto = subCategories.stream()
+				.map(subCategory -> mapperModel.map(subCategory, SubCategoryDto.class))
+				.collect(Collectors.toList());
+		
+		System.out.println("List are :"+subCatDto);
+		return new ApiResponse<List<SubCategoryDto>>(true, "Respected Subcategory fetched successfully",subCatDto,LocalDateTime.now());
 	}
-
 }
