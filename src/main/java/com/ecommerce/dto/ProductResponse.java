@@ -86,6 +86,4 @@ public class ProductResponse {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-	
-	
 }

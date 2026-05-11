@@ -8,6 +8,6 @@ import com.ecommerce.dto.SubCategoryDto;
 
 public interface CategoryService {
 	public ApiResponse<List<CategoryResponse>> getAllCategories(int page, int size, String sortDir, String sortBy);
-	public SubCategoryDto getSubCategoryByName(String subCategoryName);
-	public CategoryResponse findByCategoryName(String categoryName);
+	public ApiResponse<SubCategoryDto> getSubCategoryByName(String subCategoryName);
+	public ApiResponse<CategoryResponse> findByCategoryName(String categoryName);
 }

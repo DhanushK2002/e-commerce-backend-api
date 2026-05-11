@@ -139,7 +139,7 @@ public class ProductServiceImplementation implements ProductService {
 		if (user.getUsername().equals(username))
 			orderRepo.save(newOrder);
 		else
-			throw new RuntimeException("Not the same user");
+			throw new RuntimeException("ERROR");
 
 		return "Order Placed for the item " + product.getProductName();
 	}

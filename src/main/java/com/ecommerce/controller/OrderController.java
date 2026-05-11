@@ -28,24 +28,21 @@ public class OrderController {
 	}
 
 	@PostMapping("/place")
-	public ResponseEntity<?> placeOrder(@RequestParam Long userId, @RequestParam Long productId, @RequestParam Integer quantity){
-		String order = productService.placeOrder(userId, productId, quantity);
-		ApiResponse<?> response = new ApiResponse<>(true, "Order placed successfully",order,LocalDateTime.now());
-		return ResponseEntity.ok(response);
+	public ApiResponse<?> placeOrder(@RequestParam Long userId, @RequestParam Long productId, @RequestParam Integer quantity){
+		String order = productService.placeOrder(userId, productId, quantity); 
+		return new ApiResponse<>(true, "Order placed successfully",order,LocalDateTime.now());
 	}
 	
 	@GetMapping("/myorders")
-	public ResponseEntity<ApiResponse<OrderRespone>> getMyOrders(){
-		List<OrderRespone> orders = productService.getMyOrders();
-		ApiResponse<OrderRespone> response = new ApiResponse(true, "Your Orders", orders, LocalDateTime.now());
-		return ResponseEntity.ok(response);
+	public ApiResponse<OrderRespone> getMyOrders(){
+		List<OrderRespone> orders = productService.getMyOrders(); 
+		return new ApiResponse(true, "Your Orders", orders, LocalDateTime.now());
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
-	public ResponseEntity<ApiResponse<?>> getAllOrders(){
+	public ApiResponse<?> getAllOrders(){
 		ResponseEntity<?> allOrders = productService.getAllOrders();
-		ApiResponse<?> response = new ApiResponse(true, "All orders", allOrders, LocalDateTime.now());
-		return ResponseEntity.ok(response);
+		return new ApiResponse(true, "All orders", allOrders, LocalDateTime.now());
 	}
 }

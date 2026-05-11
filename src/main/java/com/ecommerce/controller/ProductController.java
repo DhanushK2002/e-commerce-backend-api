@@ -1,9 +1,7 @@
 package com.ecommerce.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,19 +43,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/category/{categoryName}")
-	public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryByName(@PathVariable String categoryName) {
-		CategoryResponse category = categoryService.findByCategoryName(categoryName);
-
-		boolean success = false;
-		String message = "Sorry! no such category found";
-		if (category != null) {
-			success = true;
-			message = "Respected category fetched successfully";
-		}
-		ApiResponse<CategoryResponse> response = new ApiResponse<CategoryResponse>(success, message, category,
-				LocalDateTime.now());
-
-		return ResponseEntity.ok(response);
+	public ApiResponse<CategoryResponse> findCategoryByName(@PathVariable String categoryName) {
+		return categoryService.findByCategoryName(categoryName);
 	}
 
 	// Find Product By ID
@@ -73,19 +60,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/subcategory/{subCategoryName}")
-	public ResponseEntity<ApiResponse<SubCategoryDto>> getSubCategoryByName(@PathVariable String subCategoryName) {
-		SubCategoryDto subCategory = categoryService.getSubCategoryByName(subCategoryName);
-
-		boolean success = false;
-		String message = "Sorry! respected Sub-Category not found";
-		if (subCategory != null) {
-			success = true;
-			message = "Respected Subcategory fetched successfully";
-		}
-		ApiResponse<SubCategoryDto> response = new ApiResponse<SubCategoryDto>(success, message, subCategory,
-				LocalDateTime.now());
-
-		return ResponseEntity.ok(response);
+	public ApiResponse<SubCategoryDto> getSubCategoryByName(@PathVariable String subCategoryName) {	
+		return categoryService.getSubCategoryByName(subCategoryName);
 	}
 
 	// ADMIN

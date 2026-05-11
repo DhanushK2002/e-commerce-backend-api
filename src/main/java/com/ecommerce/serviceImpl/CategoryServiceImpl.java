@@ -55,23 +55,29 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public CategoryResponse findByCategoryName(String categoryName) {
+	public ApiResponse<CategoryResponse> findByCategoryName(String categoryName) {
 		
 		Optional<Category> category = categoryRepo.findByCategoryName(categoryName);
+		
+		if(category == null)
+			throw new ResourceNotFoundException("Sorry! no such category found");
 
-		CategoryResponse categorydto = mapperModel.map(category, CategoryResponse.class);
-		return categorydto;
-	
+		CategoryResponse categoryDto = mapperModel.map(category, CategoryResponse.class);
+		
+		return new ApiResponse<CategoryResponse>(true, "Respected category fetched successfully", categoryDto, LocalDateTime.now());
 	}
 
 	@Override
-	public SubCategoryDto getSubCategoryByName(String subCategoryName) {
+	public ApiResponse<SubCategoryDto> getSubCategoryByName(String subCategoryName) {
 
 		Optional<SubCategory> subCategory = subCatRepo.findBySubCategoryName(subCategoryName);
+		
+		if(subCategory == null) {
+			throw new ResourceNotFoundException("Sorry! respected Sub-Category not found");
+		}
 
 		SubCategoryDto subCatDto = mapperModel.map(subCategory, SubCategoryDto.class);
-		return subCatDto;
-	
+		return new ApiResponse<SubCategoryDto>(true, "Respected Subcategory fetched successfully",subCatDto,LocalDateTime.now());
 	}
 
 }
