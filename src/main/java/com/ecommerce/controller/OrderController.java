@@ -3,7 +3,6 @@ package com.ecommerce.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,8 +34,7 @@ public class OrderController {
 	
 	@GetMapping("/myorders")
 	public ApiResponse<List<OrderResponse>> getMyOrders(){
-		List<OrderResponse> orders = productService.getMyOrders();
-		return new ApiResponse<List<OrderResponse>>(true, "Your Orders", orders, LocalDateTime.now());
+		return productService.getMyOrders();
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

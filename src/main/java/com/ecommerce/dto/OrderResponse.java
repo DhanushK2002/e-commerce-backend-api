@@ -9,7 +9,7 @@ public class OrderResponse {
     private String productName;
     private String address;
 
-       
+    
     public OrderResponse() {
 		super();
 	}
@@ -20,6 +20,9 @@ public class OrderResponse {
         if(order.getUser() != null) {
         	this.username = order.getUser().getUsername();
         	this.address = order.getUser().getAddress();
+        }else {
+        	this.username = "Unknown user(old record)";
+        	this.address = "No address";
         }
         if(order.getProduct() != null) {
         	this.productName = order.getProduct().getProductName();
@@ -64,7 +67,5 @@ public class OrderResponse {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-    
-    
+	}    
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -147,27 +146,17 @@ public class ProductServiceImplementation implements ProductService {
 
 	// Orders of the respected Users
 	@Override
-	public List<OrderResponse> getMyOrders() {
+	public ApiResponse<List<OrderResponse>> getMyOrders() {
 		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepo.findByUsername(identifier)
 				.orElseThrow(() -> new UserNotFoundException("User not found with username " + identifier));
 		List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
-//		List<OrderDto> ordersDto = orders.stream()
-//				.map(order -> mapperModel.map(order, OrderDto.class))
-//				.toList();
-//		
-//		return ordersDto;
-//		return orders.stream().map(OrderResponse::new) // .map(order -> mapperModel(order, OrderDto.class)
-//				.toList();
-		return null;
-	}
 
-//	public List<Order> getMyOrders() {
-//		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
-//		User user = userRepo.findByEmail(identifier)
-//				.orElseThrow(() -> new RuntimeException("User not found with email "+identifier));
-//		return orderRepo.findByUser_UserId(user.getUserId());
-//	}
+		List<OrderResponse> orderResponse = orders.stream()
+		.map(order -> new OrderResponse(order))
+		.toList();
+		return new ApiResponse<List<OrderResponse>>(true, "Your orders", orderResponse, LocalDateTime.now());
+	}
 
 	// All orders
 	@Override
@@ -175,7 +164,7 @@ public class ProductServiceImplementation implements ProductService {
 		
 		List<OrderResponse> orders = orderRepo.findAll()
 				.stream()
-				.map(order -> mapperModel.map(order, OrderResponse.class)) 																					// mapperModel(order,OrderDto.class))
+				.map(order -> new OrderResponse(order)) 																					// mapperModel(order,OrderDto.class))
 				.collect(Collectors.toList());
 
 		return new ApiResponse<List<OrderResponse>>(true, "All customer orders",orders, LocalDateTime.now());
