@@ -2,13 +2,10 @@ package com.ecommerce.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.OrderRespone;
+import com.ecommerce.dto.OrderResponse;
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.dto.ProductResponse;
-import com.ecommerce.model.Product;
 
 public interface ProductService {
 	
@@ -27,8 +24,8 @@ public interface ProductService {
 	
 	public String placeOrder(Long userId, Long productId, Integer quantity);
 
-	public List<OrderRespone> getMyOrders();
+	public List<OrderResponse> getMyOrders();
 	
-	public ResponseEntity<?> getAllOrders();
+	public ApiResponse<List<OrderResponse>> getAllOrders();
 
 }

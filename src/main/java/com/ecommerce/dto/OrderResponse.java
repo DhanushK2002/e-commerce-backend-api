@@ -2,14 +2,19 @@ package com.ecommerce.dto;
 
 import com.ecommerce.model.Order;
 
-public class OrderRespone {
+public class OrderResponse {
 	private Long orderId;
     private Integer quantity;
     private String username;
     private String productName;
     private String address;
 
-    public OrderRespone(Order order) {
+       
+    public OrderResponse() {
+		super();
+	}
+
+	public OrderResponse(Order order) {
         this.orderId = order.getOrderId();
         this.quantity = order.getQuantity();
         if(order.getUser() != null) {

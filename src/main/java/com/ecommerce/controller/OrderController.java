@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.OrderRespone;
+import com.ecommerce.dto.OrderResponse;
 import com.ecommerce.service.ProductService;
 
 
@@ -34,15 +34,14 @@ public class OrderController {
 	}
 	
 	@GetMapping("/myorders")
-	public ApiResponse<OrderRespone> getMyOrders(){
-		List<OrderRespone> orders = productService.getMyOrders(); 
-		return new ApiResponse(true, "Your Orders", orders, LocalDateTime.now());
+	public ApiResponse<List<OrderResponse>> getMyOrders(){
+		List<OrderResponse> orders = productService.getMyOrders();
+		return new ApiResponse<List<OrderResponse>>(true, "Your Orders", orders, LocalDateTime.now());
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
-	public ApiResponse<?> getAllOrders(){
-		ResponseEntity<?> allOrders = productService.getAllOrders();
-		return new ApiResponse(true, "All orders", allOrders, LocalDateTime.now());
+	public ApiResponse<List<OrderResponse>> getAllOrders(){
+		return productService.getAllOrders();
 	}
 }

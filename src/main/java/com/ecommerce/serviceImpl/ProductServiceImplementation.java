@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.OrderRespone;
+import com.ecommerce.dto.OrderResponse;
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.exception.ResourceNotFoundException;
@@ -147,7 +147,7 @@ public class ProductServiceImplementation implements ProductService {
 
 	// Orders of the respected Users
 	@Override
-	public List<OrderRespone> getMyOrders() {
+	public List<OrderResponse> getMyOrders() {
 		String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepo.findByUsername(identifier)
 				.orElseThrow(() -> new UserNotFoundException("User not found with username " + identifier));
@@ -157,8 +157,9 @@ public class ProductServiceImplementation implements ProductService {
 //				.toList();
 //		
 //		return ordersDto;
-		return orders.stream().map(OrderRespone::new) // .map(order -> mapperModel(order, OrderDto.class)
-				.toList();
+//		return orders.stream().map(OrderResponse::new) // .map(order -> mapperModel(order, OrderDto.class)
+//				.toList();
+		return null;
 	}
 
 //	public List<Order> getMyOrders() {
@@ -170,13 +171,13 @@ public class ProductServiceImplementation implements ProductService {
 
 	// All orders
 	@Override
-	public ResponseEntity<List<OrderRespone>> getAllOrders() {
-
-		List<OrderRespone> orders = orderRepo.findAll().stream().map(OrderRespone::new) // .map(order -> new
-																						// OrderRepsonseRequest(order))
-																						// // .map(order ->
-																						// mapperModel(order,OrderDto.class))
+	public ApiResponse<List<OrderResponse>> getAllOrders() {
+		
+		List<OrderResponse> orders = orderRepo.findAll()
+				.stream()
+				.map(order -> mapperModel.map(order, OrderResponse.class)) 																					// mapperModel(order,OrderDto.class))
 				.collect(Collectors.toList());
-		return ResponseEntity.ok(orders);
+
+		return new ApiResponse<List<OrderResponse>>(true, "All customer orders",orders, LocalDateTime.now());
 	}
 }
