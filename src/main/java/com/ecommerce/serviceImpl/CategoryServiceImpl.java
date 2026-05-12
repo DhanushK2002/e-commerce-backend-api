@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
 		
 		Optional<Category> category = categoryRepo.findByCategoryName(categoryName);
 		
-		if(category == null)
+		if(category.isEmpty())
 			throw new ResourceNotFoundException("Sorry! no such category found");
 
 		CategoryResponse categoryDto = mapperModel.map(category, CategoryResponse.class);

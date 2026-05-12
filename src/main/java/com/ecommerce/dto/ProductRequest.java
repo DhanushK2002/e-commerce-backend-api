@@ -7,20 +7,22 @@ public class ProductRequest {
 	private Double price;
 	private Integer stock;
 	private String description;
-	private String productCategory;
+	private Long subCategoryId;
+	private Long categoryId;
 
 	public ProductRequest() {
 		super();
 	}
 
-	public ProductRequest(Long productId, String productName, Double price, String productCategory, Integer stock, String description) {
+	public ProductRequest(Long productId, String productName, Double price, Long subCategoryId, Integer stock, String description, Long categoryId) {
 		super();
 		this.productName = productName;
 		this.price = price;
-		this.productCategory = productCategory;
+		this.subCategoryId = subCategoryId;
 		this.stock = stock;
 		this.description = description;
 		this.productId = productId;
+		this.categoryId = categoryId;
 	}
 
 	public Long getProductId() {
@@ -63,17 +65,19 @@ public class ProductRequest {
 		this.description = description;
 	}
 
-	public String getProductCategory() {
-		return productCategory;
+	public Long getSubCategoryId() {
+		return subCategoryId;
 	}
 
-	public void setProductCategory(String productCategory) {
-		this.productCategory = productCategory;
+	public void setSubCategory(Long subCategoryId) {
+		this.subCategoryId = subCategoryId;
 	}
 
-	@Override
-	public String toString() {
-		return "ProductRequest [productName=" + productName + ", price=" + price + ", stock=" + stock + ", description="
-				+ description + ", productCategory=" + productCategory + "]";
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategory(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 }
