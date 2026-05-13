@@ -1,42 +1,22 @@
 package com.ecommerce.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
 public class LoginResponse {
-	@NotBlank(message = "Email cannot be blank")
-	private String emailId;
-	
-	@NotEmpty(message = "Password cannot be empty")
-	private String password;
-	
-	@NotNull(message = "Username cannot be null or empty")
-	private String username;
+	String accessToken;
 
-	public String getEmailId() {
-		return emailId;
+	public LoginResponse() {
+		super();
 	}
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+	public LoginResponse(String accessToken) {
+		super();
+		this.accessToken = accessToken;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getAccessToken() {
+		return accessToken;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
-	
-	public String getUsername() {
-		return username;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	
 }

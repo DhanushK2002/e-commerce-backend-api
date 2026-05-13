@@ -1,11 +1,11 @@
 package com.ecommerce.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class LoginRequest {
-	@NotBlank(message = "Email cannot be blank")
+	@Column(nullable = true)
 	private String email;
 	
 	@NotEmpty(message = "Password cannot be empty")
