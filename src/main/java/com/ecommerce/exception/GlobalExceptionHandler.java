@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 //		error.put("Status", HttpStatus.NOT_FOUND.value());
 //		error.put("Message", ex.getMessage());
 		
-		ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null, LocalDateTime.now());
+		ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), LocalDateTime.now());
 		return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 	}
 	
@@ -33,7 +33,14 @@ public class GlobalExceptionHandler {
 //		error.put("Status", HttpStatus.NOT_FOUND.value());
 //		error.put("Message", ex.getMessage());
 		
-		ApiResponse<String> response = new ApiResponse<String>(false, ex.getMessage(), null, LocalDateTime.now());
+		ApiResponse<String> response = new ApiResponse<String>(false, ex.getMessage(), LocalDateTime.now());
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(CustomException.class)
+	public ResponseEntity<ApiResponse<?>> handleCustomException(CustomException ex){
+		ApiResponse<?> response =  new ApiResponse<>(false, ex.getMessage(), LocalDateTime.now());
+		
+		return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
 	}
 }

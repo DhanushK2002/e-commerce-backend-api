@@ -4,7 +4,9 @@ package com.ecommerce.serviceImpl;
 import java.time.LocalDateTime;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import com.ecommerce.dto.LoginRequest;
 import com.ecommerce.dto.LoginResponse;
 import com.ecommerce.dto.RegisterRequest;
 import com.ecommerce.dto.RegisterResponse;
+import com.ecommerce.exception.CustomException;
 import com.ecommerce.model.Password;
 import com.ecommerce.model.Role;
 import com.ecommerce.model.User;
@@ -79,12 +82,17 @@ public class UserServiceImplementation implements UserService {
 	
 	@Override
 	public ApiResponse<LoginResponse> login(LoginRequest request){
-		authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-
-		String token = jwtUtil.generateToken(request.getUsername());
-		
-		LoginResponse response = new LoginResponse(token);
-		
-		return new ApiResponse<LoginResponse>(true, "Access token",response,LocalDateTime.now());
+		try {
+			Authentication authenticate = authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+			String token = "";
+			if(authenticate.isAuthenticated())
+				token = jwtUtil.generateToken(request.getUsername());
+			
+			LoginResponse response = new LoginResponse(token);
+			
+			return new ApiResponse<LoginResponse>(true, "Access token",response,LocalDateTime.now());
+		} catch (BadCredentialsException e) {
+			throw new CustomException("Invalid Credentials"); 
+		}
 	}
 }
