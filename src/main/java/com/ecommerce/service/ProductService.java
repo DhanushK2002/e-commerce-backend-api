@@ -19,9 +19,6 @@ public interface ProductService {
 	
 	public ApiResponse<ProductResponse> getProductById(Long productId);
 	
-
-	
-	
 	public String placeOrder(Long userId, Long productId, Integer quantity);
 
 	public ApiResponse<List<OrderResponse>> getMyOrders();

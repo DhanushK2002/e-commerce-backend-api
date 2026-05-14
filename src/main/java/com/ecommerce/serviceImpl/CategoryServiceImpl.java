@@ -6,28 +6,34 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.dto.ApiResponse;
 import com.ecommerce.dto.CategoryResponse;
+import com.ecommerce.dto.PageResponse;
 import com.ecommerce.dto.SubCategoryDto;
 import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.model.Category;
 import com.ecommerce.model.SubCategory;
-import com.ecommerce.repository.SubCategoryRepository;
 import com.ecommerce.repository.CategoryRepository;
+import com.ecommerce.repository.SubCategoryRepository;
 import com.ecommerce.service.CategoryService;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
 	private final CategoryRepository categoryRepo;
 	private final SubCategoryRepository subCatRepo;
 	private final ModelMapper mapperModel;
+	private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
 	public CategoryServiceImpl(CategoryRepository categoryRepo, SubCategoryRepository subCatRepo,
 			ModelMapper mapperModel) {
@@ -38,20 +44,31 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public ApiResponse<List<CategoryResponse>> getAllCategories(int page, int size, String sortDir, String sortBy) {
+	public ApiResponse<PageResponse<CategoryResponse>> getAllCategories(Pageable pageable) {
 		
-		Sort.Direction direction = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-		List<Category> categories = categoryRepo.findAll(pageable).getContent();
+//		Sort.Direction direction = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+//		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		
+		log.info("Fetching categories for page {} with size {}",pageable.getPageNumber(),pageable.getPageSize());
+		Page<Category> categoryPage = categoryRepo.findAll(pageable); 
+		List<Category> categories = categoryPage.getContent();
 
-		if(categories == null) 
-			throw new ResourceNotFoundException("Category Not Found");
+		if(categoryPage.isEmpty()) 
+			throw new ResourceNotFoundException("You reached to the end of the page");
 		
-		List<CategoryResponse> categoryResponse =  categories.stream()
+		List<CategoryResponse> categoryResponseList =  categories.stream()
 				.map(category -> mapperModel.map(category, CategoryResponse.class))
 				.collect(Collectors.toList());
 		
-		return new ApiResponse<List<CategoryResponse>>(true, "Product Categories", categoryResponse,LocalDateTime.now());
+		PageResponse<CategoryResponse> pageResponse = new PageResponse<>(
+				categoryResponseList,
+				categoryPage.getNumber(),
+				categoryPage.getSize(),
+				categoryPage.getTotalElements(),
+				categoryPage.getTotalPages(),
+				categoryPage.isLast()
+				);
+		return new ApiResponse<>(true, "Product Categories", pageResponse,LocalDateTime.now());
 	}
 
 	@Override
@@ -71,7 +88,8 @@ public class CategoryServiceImpl implements CategoryService {
 	public ApiResponse<List<SubCategoryDto>> getSubCategoryByName(String subCategoryName) {
 
 		List<SubCategory> subCategories = subCatRepo.findBySubCategoryName(subCategoryName);
-		System.out.println("Sub categories = "+subCategories);
+		log.info("Sub Categories = {}",subCategories);
+		
 		if(subCategories.isEmpty()) {
 			throw new ResourceNotFoundException("Sorry! respected Sub-Category not found");
 		}
@@ -79,8 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
 		List<SubCategoryDto> subCatDto = subCategories.stream()
 				.map(subCategory -> mapperModel.map(subCategory, SubCategoryDto.class))
 				.collect(Collectors.toList());
-		
-		System.out.println("List are :"+subCatDto);
+	
 		return new ApiResponse<List<SubCategoryDto>>(true, "Respected Subcategory fetched successfully",subCatDto,LocalDateTime.now());
 	}
 }

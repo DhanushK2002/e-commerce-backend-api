@@ -28,19 +28,10 @@ import com.ecommerce.util.JwtUtil;
 public class UserServiceImplementation implements UserService {
 
 	private final UserRepository userRepo;
-
 	private final PasswordEncoder passwordEncoder;
-	
-//	@Autowired
-//	private Password password;
-	
 	private final AuthenticationManager authManager;
-	
 	private final JwtUtil jwtUtil;
-	
 	private final RoleRepository roleRepo;
-
-	
 	
 	public UserServiceImplementation(UserRepository userRepo, PasswordEncoder passwordEncoder,
 			AuthenticationManager authManager, JwtUtil jwtUtil, RoleRepository roleRepo) {

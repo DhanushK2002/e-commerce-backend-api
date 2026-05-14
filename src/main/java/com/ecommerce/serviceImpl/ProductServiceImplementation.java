@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +30,11 @@ import jakarta.transaction.Transactional;
 public class ProductServiceImplementation implements ProductService {
 
 	private final ProductRepository productRepo;
-
-	
 	private final UserRepository userRepo;
-
-	
 	private final ModelMapper mapperModel;
-
-	
 	private final OrderRepository orderRepo;
+	private static final Logger log = LoggerFactory.getLogger(ProductServiceImplementation.class);
 	
-
 	public ProductServiceImplementation(ProductRepository productRepo, UserRepository userRepo, ModelMapper mapperModel,
 			OrderRepository orderRepo) {
 		super();
@@ -67,7 +63,7 @@ public class ProductServiceImplementation implements ProductService {
 	public ApiResponse<Void> addProduct(ProductRequest productRequest, String username) {
 		User user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User is not ADMIN"));
 
-		System.out.println("User is " + user.getUsername());
+		log.info("User is = {}",user.getUsername());
 
 		boolean isAdmin = user.getRoles().stream()
 				.anyMatch(role -> role.getName().equals("ADMIN") || role.getName().equals("ROLE_ADMIN"));
@@ -164,7 +160,7 @@ public class ProductServiceImplementation implements ProductService {
 		
 		List<OrderResponse> orders = orderRepo.findAll()
 				.stream()
-				.map(order -> new OrderResponse(order)) 																					// mapperModel(order,OrderDto.class))
+				.map(order -> new OrderResponse(order))
 				.collect(Collectors.toList());
 
 		return new ApiResponse<List<OrderResponse>>(true, "All customer orders",orders, LocalDateTime.now());

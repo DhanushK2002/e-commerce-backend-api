@@ -18,12 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.ecommerce.filter.JwtFilter;
 import com.ecommerce.serviceImpl.CustomUserDetailsService;
 
-import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@Slf4j
 public class SecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);

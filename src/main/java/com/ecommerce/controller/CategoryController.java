@@ -2,6 +2,8 @@ package com.ecommerce.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.ApiResponse;
 import com.ecommerce.dto.CategoryResponse;
+import com.ecommerce.dto.PageResponse;
 import com.ecommerce.dto.SubCategoryDto;
 import com.ecommerce.service.CategoryService;
 
@@ -25,9 +28,9 @@ public class CategoryController {
 	}
 
 	@GetMapping("/category")
-	public ApiResponse<List<CategoryResponse>> getAllCategories(@RequestParam int page,
-			@RequestParam int size, @RequestParam String sortDir, @RequestParam String sortBy) {
-		return categoryService.getAllCategories(page, size, sortDir, sortBy);
+	public ApiResponse<PageResponse<CategoryResponse>> getAllCategories(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return categoryService.getAllCategories(pageable);
 	}
 
 	@GetMapping("/category/{categoryName}")

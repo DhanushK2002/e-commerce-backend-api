@@ -19,7 +19,7 @@ public class JwtUtil {
 	private String secretKey;
 	
 	@Value("${jwt.expirationMs}")
-	private long expirationMs;
+	private Long expirationMs;
 	
 //	public JwtUtil() {
 //		// Generates own key
