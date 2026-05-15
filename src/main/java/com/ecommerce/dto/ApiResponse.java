@@ -1,7 +1,14 @@
 package com.ecommerce.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import org.springframework.http.ResponseEntity;
+
 import java.time.LocalDateTime;
 
+@Data
+@Getter
 public class ApiResponse<T> {
 	private boolean success;
 	
@@ -11,33 +18,28 @@ public class ApiResponse<T> {
 	
 	private LocalDateTime timestamp;
 
+	private ResponseEntity.BodyBuilder status;
+
 	public ApiResponse(boolean success, String message, LocalDateTime timestamp) {
 		super();
 		this.success = success;
 		this.message = message;
 		this.timestamp = timestamp;
 	}
-	public ApiResponse(boolean success, String message, T data, LocalDateTime timestamp) {
+	public ApiResponse(boolean success, String message, T data, LocalDateTime timestamp, ResponseEntity.BodyBuilder status) {
 		super();
 		this.success = success;
 		this.message = message;
 		this.data = data;
 		this.timestamp = timestamp;
+		this.status = status;
 	}
-	
-	public boolean getSuccess() {
-		return success;
-	}
-	
-	public String getMessage() {
-		return message;
-	}
-	
-	public T getData() {
-		return data;
-	}
-	
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+
+	public ApiResponse(boolean success, String message, LocalDateTime timestamp, ResponseEntity.BodyBuilder status) {
+		super();
+		this.success = success;
+		this.message = message;
+		this.timestamp = timestamp;
+		this.status = status;
 	}
 }

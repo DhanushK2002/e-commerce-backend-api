@@ -1,5 +1,6 @@
 package com.ecommerce.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,14 +17,10 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthController {
 
 	private final UserServiceImplementation userService;
-	
-	public AuthController(UserServiceImplementation userService) {
-		super();
-		this.userService = userService;
-	}
 
 	@PostMapping("/register")
 	public ApiResponse<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {

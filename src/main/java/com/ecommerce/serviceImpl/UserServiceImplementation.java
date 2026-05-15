@@ -3,6 +3,10 @@ package com.ecommerce.serviceImpl;
 
 import java.time.LocalDateTime;
 
+import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +29,7 @@ import com.ecommerce.service.UserService;
 import com.ecommerce.util.JwtUtil;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImplementation implements UserService {
 
 	private final UserRepository userRepo;
@@ -32,16 +37,6 @@ public class UserServiceImplementation implements UserService {
 	private final AuthenticationManager authManager;
 	private final JwtUtil jwtUtil;
 	private final RoleRepository roleRepo;
-	
-	public UserServiceImplementation(UserRepository userRepo, PasswordEncoder passwordEncoder,
-			AuthenticationManager authManager, JwtUtil jwtUtil, RoleRepository roleRepo) {
-		super();
-		this.userRepo = userRepo;
-		this.passwordEncoder = passwordEncoder;
-		this.authManager = authManager;
-		this.jwtUtil = jwtUtil;
-		this.roleRepo = roleRepo;
-	}
 
 	@Override
 	public ApiResponse<RegisterResponse> register(RegisterRequest request) {
@@ -62,13 +57,13 @@ public class UserServiceImplementation implements UserService {
 		user.setPasswordDetails(password);
 
 		Role customerRole = roleRepo.findById(2L)
-				.orElseThrow(() -> new RuntimeException("Role not found in the database"));
+				.orElseThrow(() -> new CustomException("Role not found in the database", HttpStatus.NOT_FOUND));
 		
 		user.getRoles().add(customerRole);
 		
 		userRepo.save(user);
 		
-		return new ApiResponse<RegisterResponse>(true,"User Register Successfully",LocalDateTime.now());
+		return new ApiResponse<RegisterResponse>(true,"User Register Successfully",LocalDateTime.now(), ResponseEntity.status(HttpStatus.CREATED));
 	}
 	
 	@Override
@@ -81,9 +76,9 @@ public class UserServiceImplementation implements UserService {
 			
 			LoginResponse response = new LoginResponse(token);
 			
-			return new ApiResponse<LoginResponse>(true, "Access token",response,LocalDateTime.now());
+			return new ApiResponse<LoginResponse>(true, "Access token",response,LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
 		} catch (BadCredentialsException e) {
-			throw new CustomException("Invalid Credentials"); 
+			throw new CustomException("Invalid Credentials", HttpStatus.UNAUTHORIZED);
 		}
 	}
 }

@@ -1,7 +1,13 @@
 package com.ecommerce.exception;
 
+import lombok.Data;
+import org.springframework.http.HttpStatus;
+
+@Data
 public class CustomException extends RuntimeException {
-	public CustomException(String message) {
+	private final HttpStatus status;
+	public CustomException(String message, HttpStatus status) {
 		super(message);
+		this.status = status;
 	}
 }

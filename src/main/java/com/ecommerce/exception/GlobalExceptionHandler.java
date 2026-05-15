@@ -2,6 +2,7 @@ package com.ecommerce.exception;
 
 import java.time.LocalDateTime;
 
+import com.ecommerce.dto.LoginResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,7 +41,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ApiResponse<?>> handleCustomException(CustomException ex){
 		ApiResponse<?> response =  new ApiResponse<>(false, ex.getMessage(), LocalDateTime.now());
-		
-		return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>(response,ex.getStatus());
 	}
 }

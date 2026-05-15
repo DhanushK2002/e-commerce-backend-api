@@ -2,6 +2,7 @@ package com.ecommerce.controller;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,14 +22,10 @@ import com.ecommerce.serviceImpl.ProductServiceImplementation;
 
 @RestController
 @RequestMapping("/api/products")
+@AllArgsConstructor
 public class ProductController {
 
 	private final ProductService productService;
-
-	public ProductController(ProductServiceImplementation productService) {
-		super();
-		this.productService = productService;
-	}
 	
 	// Find Product By ID
 	@GetMapping("/{productId}")

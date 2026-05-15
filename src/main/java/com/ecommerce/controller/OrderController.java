@@ -3,12 +3,13 @@ package com.ecommerce.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ecommerce.dto.OrderRequest;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ecommerce.dto.ApiResponse;
 import com.ecommerce.dto.OrderResponse;
@@ -17,19 +18,15 @@ import com.ecommerce.service.ProductService;
 
 @RestController
 @RequestMapping("/api/orders")
+@AllArgsConstructor
 public class OrderController {
 	
 	private final ProductService productService;
-	
-	public OrderController(ProductService productService) {
-		super();
-		this.productService = productService;
-	}
 
 	@PostMapping("/place")
-	public ApiResponse<?> placeOrder(@RequestParam Long userId, @RequestParam Long productId, @RequestParam Integer quantity){
-		String order = productService.placeOrder(userId, productId, quantity); 
-		return new ApiResponse<>(true, "Order placed successfully",order,LocalDateTime.now());
+	public ApiResponse<?> placeOrder(@Valid @RequestBody OrderRequest orderRequest){
+		String order = productService.placeOrder(orderRequest);
+		return new ApiResponse<>(true, "Order placed successfully",order,LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
 	}
 	
 	@GetMapping("/myorders")

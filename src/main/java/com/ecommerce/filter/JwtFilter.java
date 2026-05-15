@@ -2,6 +2,8 @@ package com.ecommerce.filter;
 
 import java.io.IOException;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +23,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
+@AllArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter{
+
+	private final JwtUtil jwtUtil;
+
+	private final CustomUserDetailsService userDetailsService;
 	
-	@Autowired
-	private JwtUtil jwtUtil;
-	
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
-	
-	private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
+//	private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

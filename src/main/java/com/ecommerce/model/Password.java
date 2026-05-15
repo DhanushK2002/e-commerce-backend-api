@@ -9,8 +9,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Password {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,40 +28,4 @@ public class Password {
 	@JoinColumn(name = "user_id")
 	@JsonIgnore
 	private User user;
-
-	public Password() {
-		super();
-	}
-
-	public Password(Long passwordId, String password, User user) {
-		super();
-		this.passwordId = passwordId;
-		this.password = password;
-		this.user = user;
-	}
-
-	 
-	public Long getPasswordId() {
-		return passwordId;
-	}
-
-	public void setPasswordId(Long passwordId) {
-		this.passwordId = passwordId;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 }

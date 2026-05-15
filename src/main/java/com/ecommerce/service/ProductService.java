@@ -2,10 +2,7 @@ package com.ecommerce.service;
 
 import java.util.List;
 
-import com.ecommerce.dto.ApiResponse;
-import com.ecommerce.dto.OrderResponse;
-import com.ecommerce.dto.ProductRequest;
-import com.ecommerce.dto.ProductResponse;
+import com.ecommerce.dto.*;
 
 public interface ProductService {
 	
@@ -19,7 +16,7 @@ public interface ProductService {
 	
 	public ApiResponse<ProductResponse> getProductById(Long productId);
 	
-	public String placeOrder(Long userId, Long productId, Integer quantity);
+	public String placeOrder(OrderRequest orderRequest);
 
 	public ApiResponse<List<OrderResponse>> getMyOrders();
 	

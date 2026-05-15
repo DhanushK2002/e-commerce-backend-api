@@ -2,6 +2,7 @@ package com.ecommerce.controller;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +19,10 @@ import com.ecommerce.service.CategoryService;
 
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class CategoryController {
 	
 	private final CategoryService categoryService;
-	
-	public CategoryController(CategoryService categoryService) {
-		super();
-		this.categoryService = categoryService;
-	}
 
 	@GetMapping("/category")
 	public ApiResponse<PageResponse<CategoryResponse>> getAllCategories(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
