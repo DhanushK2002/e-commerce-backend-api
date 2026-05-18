@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -71,8 +72,10 @@ public class UserServiceImplementation implements UserService {
 		try {
 			Authentication authenticate = authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 			String token = "";
+
+			UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
 			if(authenticate.isAuthenticated())
-				token = jwtUtil.generateToken(request.getUsername());
+				token = jwtUtil.generateToken(userDetails);
 			
 			LoginResponse response = new LoginResponse(token);
 			

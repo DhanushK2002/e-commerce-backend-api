@@ -2,10 +2,11 @@ package com.ecommerce.util;
 
 import java.security.Key;
 import java.util.Date;
-
+import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -36,9 +37,16 @@ public class JwtUtil {
 //		 }
 //	}
 	
-	public String generateToken(String username) {
+	public String generateToken(UserDetails userDetails) {
+
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(authority -> authority.getAuthority())
+				.toList();
+
+
 		return Jwts.builder()
-				.setSubject(username)
+				.setSubject(userDetails.getUsername())
+				.claim("roles", roles)
 				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + expirationMs))
 				.signWith(getKey())

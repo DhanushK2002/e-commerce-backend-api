@@ -49,7 +49,8 @@ public class ProductServiceImplementation implements ProductService {
         }
 
         List<ProductResponse> productsResponse = products.stream()
-                .map(product -> mapperModel.map(product, ProductResponse.class)).toList();
+                .map(product -> mapperModel.map(product, ProductResponse.class))
+                .toList();
 
         return new ApiResponse<List<ProductResponse>>(true, "List of Products", productsResponse, LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
     }
@@ -108,7 +109,7 @@ public class ProductServiceImplementation implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         ProductResponse productResponse = mapperModel.map(product, ProductResponse.class);
 
-        return new ApiResponse<ProductResponse>(true, "Product Found!", productResponse, LocalDateTime.now(),ResponseEntity.status(HttpStatus.FOUND));
+        return new ApiResponse<ProductResponse>(true, "Product Found!", productResponse, LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
     }
 
     // Place order
@@ -145,7 +146,7 @@ public class ProductServiceImplementation implements ProductService {
         List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
 
         List<OrderResponse> orderResponse = orders.stream()
-                .map(order -> new OrderResponse(order))
+                .map(OrderResponse::new)//.map(order -> new OrderResponse(order))
                 .toList();
         return new ApiResponse<List<OrderResponse>>(true, "Your orders", orderResponse, LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
     }

@@ -1,7 +1,9 @@
 package com.ecommerce.filter;
 
 import java.io.IOException;
+import java.util.List;
 
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ecommerce.serviceImpl.CustomUserDetailsService;
 import com.ecommerce.util.JwtUtil;
@@ -55,6 +58,16 @@ public class JwtFilter extends OncePerRequestFilter{
 					log.info("User details instance = {} ",userDetails.getClass().getSimpleName());
 					
 					if(jwtUtil.validateToken(token)) {
+
+                         Claims claims = jwtUtil.extractClaims(token);
+
+						 List<String> roles = claims.get("roles", List.class);
+
+
+						 List<SimpleGrantedAuthority> authorities = roles.stream()
+								 .map(role -> new SimpleGrantedAuthority(role))
+								 .toList();
+
 						UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
 						auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 						
