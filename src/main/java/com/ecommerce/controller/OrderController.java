@@ -24,19 +24,21 @@ public class OrderController {
 	private final ProductService productService;
 
 	@PostMapping("/place")
-	public ApiResponse<?> placeOrder(@Valid @RequestBody OrderRequest orderRequest){
-		String order = productService.placeOrder(orderRequest);
-		return new ApiResponse<>(true, "Order placed successfully",order,LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
+	public ResponseEntity<ApiResponse<String>> placeOrder(@Valid @RequestBody OrderRequest orderRequest){
+		ApiResponse<String> response = productService.placeOrder(orderRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
 	@GetMapping("/myorders")
-	public ApiResponse<List<OrderResponse>> getMyOrders(){
-		return productService.getMyOrders();
+	public ResponseEntity<ApiResponse<List<OrderResponse>>> getMyOrders(){
+		ApiResponse<List<OrderResponse>> response = productService.getMyOrders();
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
-	public ApiResponse<List<OrderResponse>> getAllOrders(){
-		return productService.getAllOrders();
+	public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders(){
+		ApiResponse<List<OrderResponse>> response = productService.getAllOrders();
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 }

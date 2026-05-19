@@ -5,6 +5,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,18 +27,21 @@ public class CategoryController {
 	private final CategoryService categoryService;
 
 	@GetMapping("/category")
-	public ApiResponse<PageResponse<CategoryResponse>> getAllCategories(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+	public ResponseEntity<ApiResponse<PageResponse<CategoryResponse>>> getAllCategories(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		return categoryService.getAllCategories(pageable);
+		ApiResponse<PageResponse<CategoryResponse>> response = categoryService.getAllCategories(pageable);
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 
 	@GetMapping("/category/{categoryName}")
-	public ApiResponse<CategoryResponse> findCategoryByName(@PathVariable String categoryName) {
-		return categoryService.findByCategoryName(categoryName);
+	public ResponseEntity<ApiResponse<CategoryResponse>> findCategoryByName(@PathVariable String categoryName) {
+		ApiResponse<CategoryResponse> response = categoryService.findByCategoryName(categoryName);
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 
 	@GetMapping("/subcategory/{subCategoryName}")
-	public ApiResponse<List<SubCategoryDto>> getSubCategoryByName(@PathVariable String subCategoryName) {	
-		return categoryService.getSubCategoryByName(subCategoryName);
+	public ResponseEntity<ApiResponse<List<SubCategoryDto>>> getSubCategoryByName(@PathVariable String subCategoryName) {
+		ApiResponse<List<SubCategoryDto>> response = categoryService.getSubCategoryByName(subCategoryName);
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 }

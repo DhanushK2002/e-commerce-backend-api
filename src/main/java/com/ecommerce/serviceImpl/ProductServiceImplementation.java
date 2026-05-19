@@ -12,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +51,13 @@ public class ProductServiceImplementation implements ProductService {
                 .map(product -> mapperModel.map(product, ProductResponse.class))
                 .toList();
 
-        return new ApiResponse<List<ProductResponse>>(true, "List of Products", productsResponse, LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
+        return new ApiResponse<List<ProductResponse>>(
+                true,
+                "List of Products",
+                productsResponse,
+                LocalDateTime.now(),
+                302
+        );
     }
 
     // Add New Product
@@ -71,7 +76,13 @@ public class ProductServiceImplementation implements ProductService {
 
         Product product = mapperModel.map(productRequest, Product.class);
         productRepo.save(product);
-        return new ApiResponse<Void>(true, "Product Saved Successfully", LocalDateTime.now(), ResponseEntity.status(HttpStatus.CREATED));
+        return new ApiResponse<Void>(
+                true,
+                "Product Saved Successfully",
+                null,
+                LocalDateTime.now(),
+                201
+        );
     }
 
     // Update Product By ID
@@ -87,8 +98,13 @@ public class ProductServiceImplementation implements ProductService {
 
         ProductResponse productResponse = mapperModel.map(productRepo.save(products), ProductResponse.class);
 
-        return new ApiResponse<ProductResponse>(true, "Product Updated Successfully", productResponse,
-                LocalDateTime.now(), ResponseEntity.status(HttpStatus.valueOf(200)));
+        return new ApiResponse<ProductResponse>(
+                true,
+                "Product Updated Successfully",
+                productResponse,
+                LocalDateTime.now(),
+                200
+        );
     }
 
     // Delete Product By ID
@@ -99,7 +115,13 @@ public class ProductServiceImplementation implements ProductService {
 
         productRepo.delete(product);
 
-        return new ApiResponse<Void>(true, "Product Deleted Successfully", LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
+        return new ApiResponse<Void>(
+                true,
+                "Product Deleted Successfully",
+                null,
+                LocalDateTime.now(),
+                200
+        );
     }
 
     // Find Product By ID
@@ -109,13 +131,19 @@ public class ProductServiceImplementation implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         ProductResponse productResponse = mapperModel.map(product, ProductResponse.class);
 
-        return new ApiResponse<ProductResponse>(true, "Product Found!", productResponse, LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
+        return new ApiResponse<ProductResponse>(
+                true,
+                "Product Found!",
+                productResponse,
+                LocalDateTime.now(),
+                302
+        );
     }
 
     // Place order
     @Transactional
     @Override
-    public String placeOrder(OrderRequest orderRequest) {
+    public ApiResponse<String> placeOrder(OrderRequest orderRequest) {
         Product product = productRepo.findById(orderRequest.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         if (orderRequest.getQuantity() > product.getStock()) {
@@ -134,7 +162,13 @@ public class ProductServiceImplementation implements ProductService {
         else
             throw new RuntimeException("ERROR");
 
-        return "Order Placed for the item " + product.getProductName();
+        return new ApiResponse<>(
+                true,
+                "Order placed successfully for the item "+product.getProductName(),
+                null,
+                LocalDateTime.now(),
+                200
+        );
     }
 
     // Orders of the respected Users
@@ -146,9 +180,15 @@ public class ProductServiceImplementation implements ProductService {
         List<Order> orders = orderRepo.findByUser_UserId(user.getUserId());
 
         List<OrderResponse> orderResponse = orders.stream()
-                .map(OrderResponse::new)//.map(order -> new OrderResponse(order))
+                .map(OrderResponse::new)    //.map(order -> new OrderResponse(order))
                 .toList();
-        return new ApiResponse<List<OrderResponse>>(true, "Your orders", orderResponse, LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
+        return new ApiResponse<List<OrderResponse>>(
+                true,
+                "Your orders",
+                orderResponse,
+                LocalDateTime.now(),
+                302
+        );
     }
 
     // All orders
@@ -160,6 +200,12 @@ public class ProductServiceImplementation implements ProductService {
                 .map(order -> new OrderResponse(order))
                 .collect(Collectors.toList());
 
-        return new ApiResponse<List<OrderResponse>>(true, "All customer orders", orders, LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
+        return new ApiResponse<List<OrderResponse>>(
+                true,
+                "All customer orders",
+                orders,
+                LocalDateTime.now(),
+                302
+        );
     }
 }

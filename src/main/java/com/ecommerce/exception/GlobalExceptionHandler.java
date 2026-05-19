@@ -2,7 +2,6 @@ package com.ecommerce.exception;
 
 import java.time.LocalDateTime;
 
-import com.ecommerce.dto.LoginResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +23,7 @@ public class GlobalExceptionHandler {
 //		error.put("Status", HttpStatus.NOT_FOUND.value());
 //		error.put("Message", ex.getMessage());
 		
-		ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), LocalDateTime.now());
+		ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null,LocalDateTime.now(),404);
 		return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 	}
 	
@@ -34,13 +33,13 @@ public class GlobalExceptionHandler {
 //		error.put("Status", HttpStatus.NOT_FOUND.value());
 //		error.put("Message", ex.getMessage());
 		
-		ApiResponse<String> response = new ApiResponse<String>(false, ex.getMessage(), LocalDateTime.now());
+		ApiResponse<String> response = new ApiResponse<String>(false, ex.getMessage(), null,LocalDateTime.now(),404);
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ApiResponse<?>> handleCustomException(CustomException ex){
-		ApiResponse<?> response =  new ApiResponse<>(false, ex.getMessage(), LocalDateTime.now());
+		ApiResponse<?> response =  new ApiResponse<>(false, ex.getMessage(), null, LocalDateTime.now(),ex.getStatus().value());
 		return new ResponseEntity<>(response,ex.getStatus());
 	}
 }

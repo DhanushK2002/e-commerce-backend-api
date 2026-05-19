@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItemDto {
-    private Long cartItemId;
+public class CartResponse {
     private Long cartId;
-    private Long productId;
-    private Integer quantity;
+    private List<CartItemResponse>  items;
+    private Double totalCartPrice;
 }

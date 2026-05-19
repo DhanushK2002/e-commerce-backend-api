@@ -63,7 +63,12 @@ public class CategoryServiceImpl implements CategoryService {
 				categoryPage.getTotalPages(),
 				categoryPage.isLast()
 				);
-		return new ApiResponse<>(true, "Product Categories", pageResponse,LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
+		return new ApiResponse<>(
+				true,
+				"Product Categories",
+				pageResponse,
+				LocalDateTime.now(),
+				302);
 	}
 
 	@Override
@@ -76,7 +81,11 @@ public class CategoryServiceImpl implements CategoryService {
 
 		CategoryResponse categoryDto = mapperModel.map(category, CategoryResponse.class);
 		
-		return new ApiResponse<CategoryResponse>(true, "Respected category fetched successfully", categoryDto, LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
+		return new ApiResponse<CategoryResponse>(
+				true,
+				"Respected category fetched successfully",
+				categoryDto, LocalDateTime.now(),
+				302);
 	}
 
 	@Override
@@ -93,6 +102,11 @@ public class CategoryServiceImpl implements CategoryService {
 				.map(subCategory -> mapperModel.map(subCategory, SubCategoryDto.class))
 				.collect(Collectors.toList());
 	
-		return new ApiResponse<List<SubCategoryDto>>(true, "Respected Subcategory fetched successfully",subCatDto,LocalDateTime.now(), ResponseEntity.status(HttpStatus.FOUND));
+		return new ApiResponse<List<SubCategoryDto>>(
+				true,
+				"Respected Subcategory fetched successfully",
+				subCatDto,
+				LocalDateTime.now(),
+				302);
 	}
 }

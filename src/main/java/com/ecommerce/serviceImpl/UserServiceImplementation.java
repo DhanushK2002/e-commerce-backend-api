@@ -64,7 +64,13 @@ public class UserServiceImplementation implements UserService {
 		
 		userRepo.save(user);
 		
-		return new ApiResponse<RegisterResponse>(true,"User Register Successfully",LocalDateTime.now(), ResponseEntity.status(HttpStatus.CREATED));
+		return new ApiResponse<RegisterResponse>(
+				true,
+				"User Register Successfully",
+				null,
+				LocalDateTime.now(),
+				201
+		);
 	}
 	
 	@Override
@@ -79,7 +85,13 @@ public class UserServiceImplementation implements UserService {
 			
 			LoginResponse response = new LoginResponse(token);
 			
-			return new ApiResponse<LoginResponse>(true, "Access token",response,LocalDateTime.now(), ResponseEntity.status(HttpStatus.OK));
+			return new ApiResponse<LoginResponse>(
+					true,
+					"Access token",
+					response,
+					LocalDateTime.now(),
+					200
+			);
 		} catch (BadCredentialsException e) {
 			throw new CustomException("Invalid Credentials", HttpStatus.UNAUTHORIZED);
 		}

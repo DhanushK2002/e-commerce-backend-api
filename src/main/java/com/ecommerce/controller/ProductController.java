@@ -2,7 +2,10 @@ package com.ecommerce.controller;
 
 import java.util.List;
 
+import com.sun.net.httpserver.HttpPrincipal;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,14 +32,16 @@ public class ProductController {
 	
 	// Find Product By ID
 	@GetMapping("/{productId}")
-	public ApiResponse<ProductResponse> getProductById(@PathVariable Long productId) {
-		return productService.getProductById(productId);
+	public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long productId) {
+		ApiResponse<ProductResponse> response = productService.getProductById(productId);
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 
 	// List of All Products
 	@GetMapping
-	public ApiResponse<List<ProductResponse>> getAllProducts() {
-		return  productService.getAllProducts();
+	public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
+		ApiResponse<List<ProductResponse>> response = productService.getAllProducts();
+		return  ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 
 	// ADMIN
@@ -44,22 +49,25 @@ public class ProductController {
 	// Add New Product
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/admin/add")
-	public ApiResponse<Void> addProduct(@RequestBody ProductRequest productRequest, Authentication auth) {
-		return productService.addProduct(productRequest, auth.getName());
+	public ResponseEntity<ApiResponse<Void>> addProduct(@RequestBody ProductRequest productRequest, Authentication auth) {
+		ApiResponse<Void> response = productService.addProduct(productRequest, auth.getName());
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	// Update Product By ID
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/admin/update/{productId}")
-	public ApiResponse<ProductResponse> updateProduct(@PathVariable Long productId,
+	public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long productId,
 			@RequestBody ProductRequest request) {
-		return productService.updateProduct(productId, request);
+		ApiResponse<ProductResponse> response = productService.updateProduct(productId, request);
+		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 
 	// Delete Product By ID
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/admin/delete/{productId}")
-	public ApiResponse<Void> deleteProduct(@PathVariable Long productId) {
-		return productService.deleteProduct(productId);
+	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long productId) {
+		ApiResponse<Void> response = productService.deleteProduct(productId);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
