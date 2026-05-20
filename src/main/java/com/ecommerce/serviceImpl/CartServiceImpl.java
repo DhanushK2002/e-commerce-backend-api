@@ -36,22 +36,34 @@ public class CartServiceImpl implements CartService {
     private final UserRepository userRepo;
     private final CartItemRepository cartItemRepo;
 
+    //HELPER Method
+    private User getCurrentUser(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+
+    // ADD items to the cart
     @Override
     public ApiResponse<String> addItemsToCart(CartItemRequest cartItemRequest) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        String username = getCurrentUser();// SecurityContextHolder.getContext().getAuthentication().getName();
 
-        User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+//        User user = userRepo.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        User user = getCurrentUser();
 
         Product product = productRepo.findById(cartItemRequest.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         Cart cart = cartRepo.findByUser(user)
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUser(user);
-                    return cartRepo.save(newCart);
-                });
+                .orElseThrow(() -> new CustomException("Cart not found", HttpStatus.NOT_FOUND));
+//                .orElseGet(() -> {
+//                    Cart newCart = new Cart();
+//                    newCart.setUser(user);
+//                    return cartRepo.save(newCart);
+//                });
 
         if(cartItemRequest.getQuantity() > product.getStock())
             throw new RuntimeException("Quantity Out of stock");
@@ -82,14 +94,23 @@ public class CartServiceImpl implements CartService {
         );
     }
 
+    // VIEW cart
     @Override
     public ApiResponse<CartResponse> viewCart() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepo.findByUsername(username)
-                .orElseThrow(()-> new UserNotFoundException("User not found"));
+//        String username = getCurrentUser();// SecurityContextHolder.getContext().getAuthentication().getName();
+
+//        User user = userRepo.findByUsername(username)
+//                .orElseThrow(()-> new UserNotFoundException("User not found"));
+
+        User user = getCurrentUser();
 
         Cart cart = cartRepo.findByUser(user)
-                .orElseThrow(() -> new CustomException("Cart not found", HttpStatus.NOT_FOUND));
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    return cartRepo.save(newCart);
+                });
+//                .orElseThrow(() -> new CustomException("Cart not found", HttpStatus.NOT_FOUND));
 
         List<CartItemResponse> itemResponses = cart.getCartItemList().stream()
                 .map(item->{
@@ -108,6 +129,9 @@ public class CartServiceImpl implements CartService {
                 .sum();
         CartResponse cartResponse = new CartResponse(cart.getCartId(), itemResponses, totalPrice);
 
+//        if(itemResponses.isEmpty())
+//            throw new CustomException("Your cart is empty", HttpStatus.FOUND);
+
         return new ApiResponse<>(
                 true,
                 "Cart fetched successfully",
@@ -117,12 +141,16 @@ public class CartServiceImpl implements CartService {
         );
     }
 
+    // CLEAR cart
     @Override
     @Transactional
     public ApiResponse<String> clearCart() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+//        String username = getCurrentUser();// SecurityContextHolder.getContext().getAuthentication().getName();
+
+//        User user = userRepo.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        User user = getCurrentUser();
 
         Cart cart = cartRepo.findByUser(user)
                 .orElseThrow(() -> new CustomException("Cart not found", HttpStatus.NOT_FOUND));
@@ -135,7 +163,63 @@ public class CartServiceImpl implements CartService {
 
         return new ApiResponse<>(
                 true,
-                "Cart cleared successfully",
+                "Cart Items cleared successfully",
+                null,
+                LocalDateTime.now(),
+                200
+        );
+    }
+
+    // UPDATE cart by ITEM ID
+    @Override
+    public ApiResponse<String> updateCartByItemId(Long itemId, Integer quantity) {
+//        String username = getCurrentUser();// SecurityContextHolder.getContext().getAuthentication().getName();
+
+//        User user = userRepo.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        User user = getCurrentUser();
+
+        CartItem cartItem = cartItemRepo.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+
+        if(!cartItem.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new CustomException("You are not authorised to update", HttpStatus.UNAUTHORIZED);
+
+        if(quantity > cartItem.getProduct().getStock())
+            throw new CustomException("Available stock is "+cartItem.getProduct().getStock(), HttpStatus.BAD_REQUEST);
+
+        cartItem.setQuantity(quantity);
+        cartItemRepo.save(cartItem);
+        return new ApiResponse<>(
+                true,
+                "Cart item updated successfully",
+                null,
+                LocalDateTime.now(),
+                200
+        );
+    }
+
+    // DELETE Specific item from cart
+    @Override
+    public ApiResponse<String> deleteCartItemById(Long itemId) {
+//        String username =  getCurrentUser();//SecurityContextHolder.getContext().getAuthentication().getName();
+
+//        User user = userRepo.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        User user = getCurrentUser();
+
+        CartItem cartItem = cartItemRepo.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+
+        if(!cartItem.getCart().getUser().getUserId().equals(user.getUserId()))
+            throw new CustomException("You are not authorised", HttpStatus.UNAUTHORIZED);
+
+        cartItemRepo.deleteById(itemId);
+        return new ApiResponse<>(
+                true,
+                "Item "+cartItem.getProduct().getProductName()+" deleted from cart successfully",
                 null,
                 LocalDateTime.now(),
                 200

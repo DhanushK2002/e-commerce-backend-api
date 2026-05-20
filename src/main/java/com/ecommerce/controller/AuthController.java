@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +24,14 @@ public class AuthController {
 	private final UserServiceImplementation userService;
 
 	@PostMapping("/register")
-	public ApiResponse<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {
-		return userService.register(request);
+	public ResponseEntity<ApiResponse<RegisterResponse>> register(@RequestBody @Valid RegisterRequest request) {
+		ApiResponse<RegisterResponse> response = userService.register(request);
+		return ResponseEntity.status(201).body(response);
 	}
 
 	@PostMapping("/login")
-	public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request) {
-		return userService.login(request);
+	public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
+		ApiResponse<LoginResponse> response = userService.login(request);
+		return ResponseEntity.status(200).body(response);
 	}
 }

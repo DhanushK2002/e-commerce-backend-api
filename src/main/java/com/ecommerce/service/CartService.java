@@ -11,4 +11,8 @@ public interface CartService {
     public ApiResponse<CartResponse> viewCart();
 
     public ApiResponse<String> clearCart();
+
+    public ApiResponse<String> updateCartByItemId(Long itemId, Integer quantity);
+
+    public ApiResponse<String> deleteCartItemById(Long itemId);
 }

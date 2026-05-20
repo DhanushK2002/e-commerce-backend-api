@@ -32,4 +32,16 @@ public class CartController {
         ApiResponse<String> response = cartService.clearCart();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @PutMapping("update/{itemId}")
+    public ResponseEntity<ApiResponse<String>> updateCartByItemId(@PathVariable Long itemId, @RequestParam Integer quantity){
+        ApiResponse<String> response = cartService.updateCartByItemId(itemId, quantity);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("delete/{itemId}")
+    public ResponseEntity<ApiResponse<String>> deleteCartItemById(@PathVariable Long itemId){
+        ApiResponse<String> response = cartService.deleteCartItemById(itemId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
