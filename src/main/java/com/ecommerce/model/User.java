@@ -41,7 +41,8 @@ public class User {
 	@NotNull
 	private String address;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_password_id")
 	private Password passwordDetails;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
