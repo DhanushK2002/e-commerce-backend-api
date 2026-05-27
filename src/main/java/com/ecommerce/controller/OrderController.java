@@ -1,6 +1,5 @@
 package com.ecommerce.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ecommerce.dto.OrderRequest;
@@ -35,7 +34,7 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.FOUND).body(response);
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/all")
 	public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders(){
 		ApiResponse<List<OrderResponse>> response = productService.getAllOrders();

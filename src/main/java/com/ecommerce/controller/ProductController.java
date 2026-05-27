@@ -2,7 +2,6 @@ package com.ecommerce.controller;
 
 import java.util.List;
 
-import com.sun.net.httpserver.HttpPrincipal;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +46,7 @@ public class ProductController {
 	// ADMIN
 
 	// Add New Product
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/admin/add")
 	public ResponseEntity<ApiResponse<Void>> addProduct(@RequestBody ProductRequest productRequest, Authentication auth) {
 		ApiResponse<Void> response = productService.addProduct(productRequest, auth.getName());
@@ -55,7 +54,7 @@ public class ProductController {
 	}
 
 	// Update Product By ID
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/admin/update/{productId}")
 	public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long productId,
 			@RequestBody ProductRequest request) {
@@ -64,7 +63,7 @@ public class ProductController {
 	}
 
 	// Delete Product By ID
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@DeleteMapping("/admin/delete/{productId}")
 	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long productId) {
 		ApiResponse<Void> response = productService.deleteProduct(productId);

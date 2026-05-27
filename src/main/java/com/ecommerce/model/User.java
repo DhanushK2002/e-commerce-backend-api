@@ -41,7 +41,7 @@ public class User {
 	@NotNull
 	private String address;
 
-	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_password_id")
 	private Password passwordDetails;
 	

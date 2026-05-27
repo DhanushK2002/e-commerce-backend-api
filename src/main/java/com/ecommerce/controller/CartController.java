@@ -10,36 +10,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/cart")
+@RequestMapping("/api/cart")
 @RequiredArgsConstructor
 public class CartController {
     private final CartService cartService;
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<ApiResponse<String>> addItemsToCart(@RequestBody CartItemRequest cartItemRequest){
         ApiResponse<String> response =  cartService.addItemsToCart(cartItemRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("view")
+    @GetMapping("/view")
     public ResponseEntity<ApiResponse<CartResponse>> viewCart(){
         ApiResponse<CartResponse> response = cartService.viewCart();
         return ResponseEntity.status(HttpStatus.FOUND).body(response);
     }
 
-    @DeleteMapping("clear")
+    @DeleteMapping("/clear")
     public ResponseEntity<ApiResponse<String>> clearCart(){
         ApiResponse<String> response = cartService.clearCart();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("update/{itemId}")
+    @PutMapping("/update/{itemId}")
     public ResponseEntity<ApiResponse<String>> updateCartByItemId(@PathVariable Long itemId, @RequestParam Integer quantity){
         ApiResponse<String> response = cartService.updateCartByItemId(itemId, quantity);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("delete/{itemId}")
+    @DeleteMapping("/delete/{itemId}")
     public ResponseEntity<ApiResponse<String>> deleteCartItemById(@PathVariable Long itemId){
         ApiResponse<String> response = cartService.deleteCartItemById(itemId);
         return ResponseEntity.status(HttpStatus.OK).body(response);

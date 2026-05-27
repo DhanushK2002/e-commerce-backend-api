@@ -6,9 +6,6 @@ import java.util.List;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String path = request.getServletPath();
-		
+
 		if(path.startsWith("/auth")) {
 			filterChain.doFilter(request, response);
 			return;
@@ -49,10 +46,9 @@ public class JwtFilter extends OncePerRequestFilter{
 		String header = request.getHeader("Authorization");
 		if(header != null && header.startsWith("Bearer ")) {
 			String token = header.substring(7);
-			
 			try {
 				String username = jwtUtil.extractUsername(token);
-				
+				log.info("Username = {}",username);
 				if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 					UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 					log.info("User details instance = {} ",userDetails.getClass().getSimpleName());
@@ -63,19 +59,19 @@ public class JwtFilter extends OncePerRequestFilter{
 
 						 List<String> roles = claims.get("roles", List.class);
 
-
 						 List<SimpleGrantedAuthority> authorities = roles.stream()
 								 .map(role -> new SimpleGrantedAuthority(role))
 								 .toList();
 
-						UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+						UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,null,authorities);
 						auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 						
 						SecurityContextHolder.getContext().setAuthentication(auth);
-						log.info("Authentication successfull for user = {} ", username);
+						log.info("Authentication successful for user = {} ", username);
 					}
 				}
 			}catch(Exception ex) {
+				log.error("Jwt filter exception occurred: ",ex);
 				SecurityContextHolder.clearContext();
 			}
 		}

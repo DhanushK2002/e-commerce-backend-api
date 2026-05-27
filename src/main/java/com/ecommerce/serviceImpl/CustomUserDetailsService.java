@@ -6,13 +6,10 @@ import java.util.stream.Collectors;
 import com.ecommerce.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.model.User;
@@ -41,7 +38,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 		log.info("Authorities = "+authorities);
 
-		return new org.springframework.security.core.userdetails.User(user.getUsername(),
-				user.getPasswordDetails().getPassword(), authorities);
+		log.info("Password = {}",user.getPasswordDetails().getPassword());
+		return new org.springframework.security.core.userdetails.User(
+				user.getUsername(),
+				user.getPasswordDetails().getPassword(),
+				authorities
+		);
 	}
 }

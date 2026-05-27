@@ -39,13 +39,16 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable()).userDetailsService(customUserDetailsService)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/admin/**").hasRole("ADMIN")
-//						.requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
-//						.requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
-//						.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/products/**").permitAll()
-						.requestMatchers("/orders/all").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET,"/orders/**").hasRole("CUSTOMER").anyRequest().authenticated())
+						.requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+						.requestMatchers("/api/products/admin/**").hasAuthority("ROLE_ADMIN")
+
+						.requestMatchers("/api/cart","/api/cart/**").hasAuthority("ROLE_CUSTOMER")
+						.requestMatchers("/api/products","/api/products/**").hasAuthority("ROLE_CUSTOMER")
+						.requestMatchers("/api/orders/all").hasAuthority("ROLE_ADMIN")
+						.requestMatchers("/api/category/**").hasAuthority("ROLE_CUSTOMER")
+						.requestMatchers("/api/subcategory/**").hasAuthority("ROLE_CUSTOMER")
+						.requestMatchers(HttpMethod.GET,"/api/orders/**").hasAuthority("ROLE_CUSTOMER")
+						.anyRequest().authenticated())
 				.addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
