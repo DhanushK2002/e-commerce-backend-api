@@ -6,6 +6,7 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,7 @@ public class JwtUtil {
 	public String generateToken(UserDetails userDetails) {
 
 		List<String> roles = userDetails.getAuthorities().stream()
-				.map(authority -> authority.getAuthority())
+				.map(GrantedAuthority::getAuthority/*authority -> authority.getAuthority()*/)
 				.toList();
 
 

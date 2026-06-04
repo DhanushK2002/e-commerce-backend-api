@@ -3,10 +3,11 @@ package com.ecommerce.service;
 import java.util.List;
 
 import com.ecommerce.dto.*;
+import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 	
-	public ApiResponse<List<ProductResponse>> getAllProducts();
+	public ApiResponse<PageResponse<ProductResponse>> getAllProducts(Pageable pageable);
 	
 	public ApiResponse<Void> addProduct(ProductRequest productRequest, String username);
 	

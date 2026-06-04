@@ -1,26 +1,20 @@
 package com.ecommerce.controller;
 
-import java.util.List;
+import com.ecommerce.dto.PageResponse;
 
+import org.springframework.data.domain.PageRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ecommerce.dto.ApiResponse;
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.service.ProductService;
-import com.ecommerce.serviceImpl.ProductServiceImplementation;
 
 @RestController
 @RequestMapping("/api/products")
@@ -33,14 +27,15 @@ public class ProductController {
 	@GetMapping("/{productId}")
 	public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long productId) {
 		ApiResponse<ProductResponse> response = productService.getProductById(productId);
-		return ResponseEntity.status(HttpStatus.FOUND).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	// List of All Products
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
-		ApiResponse<List<ProductResponse>> response = productService.getAllProducts();
-		return  ResponseEntity.status(HttpStatus.FOUND).body(response);
+	public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getAllProducts(@RequestParam(defaultValue = "0")int page, @RequestParam(defaultValue = "10")int size ) {
+		Pageable pageable = PageRequest.of(page, size);
+		ApiResponse<PageResponse<ProductResponse>> response = productService.getAllProducts(pageable);
+		return  ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	// ADMIN
@@ -59,7 +54,7 @@ public class ProductController {
 	public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long productId,
 			@RequestBody ProductRequest request) {
 		ApiResponse<ProductResponse> response = productService.updateProduct(productId, request);
-		return ResponseEntity.status(HttpStatus.FOUND).body(response);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
 	}
 
 	// Delete Product By ID

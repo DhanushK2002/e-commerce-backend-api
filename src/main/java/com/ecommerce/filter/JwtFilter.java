@@ -1,11 +1,17 @@
 package com.ecommerce.filter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ecommerce.dto.ApiResponse;
+import com.ecommerce.exception.CustomException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,7 +78,23 @@ public class JwtFilter extends OncePerRequestFilter{
 				}
 			}catch(Exception ex) {
 				log.error("Jwt filter exception occurred: ",ex);
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+
 				SecurityContextHolder.clearContext();
+
+                ApiResponse<String> apiResponse = new ApiResponse<>(
+						false,
+						"Unauthorised! Login again",
+						null,
+						LocalDateTime.now(),
+						401
+				);
+                ObjectMapper objectMapper = new ObjectMapper();
+				objectMapper.registerModule(new JavaTimeModule());
+				response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+				return;
 			}
 		}
 		filterChain.doFilter(request, response);

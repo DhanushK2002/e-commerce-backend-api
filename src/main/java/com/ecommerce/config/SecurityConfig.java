@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -36,7 +37,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		log.info("Configure Security filter chain");
 
-		http.csrf(csrf -> csrf.disable()).userDetailsService(customUserDetailsService)
+		http.csrf(AbstractHttpConfigurer::disable /*csrf -> csrf.disable()*/).userDetailsService(customUserDetailsService)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
 						.requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")

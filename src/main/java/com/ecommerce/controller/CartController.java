@@ -24,7 +24,7 @@ public class CartController {
     @GetMapping("/view")
     public ResponseEntity<ApiResponse<CartResponse>> viewCart(){
         ApiResponse<CartResponse> response = cartService.viewCart();
-        return ResponseEntity.status(HttpStatus.FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/clear")

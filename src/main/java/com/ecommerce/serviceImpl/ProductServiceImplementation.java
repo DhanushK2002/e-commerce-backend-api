@@ -9,8 +9,8 @@ import com.ecommerce.exception.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,23 +40,36 @@ public class ProductServiceImplementation implements ProductService {
 
     // List of All Products
     @Override
-    public ApiResponse<List<ProductResponse>> getAllProducts() {
+    public ApiResponse<PageResponse<ProductResponse>> getAllProducts(Pageable pageable) {
 
-        List<Product> products = productRepo.findAll();
-        if (products.isEmpty()) {
-            throw new ResourceNotFoundException("Database is empty");
+        Page<Product> productPage = productRepo.findAll(pageable);
+        List<Product> products = productPage.getContent();
+        if(productPage.isEmpty()){
+            throw new CustomException("You reached to the end of the page", HttpStatus.OK);
         }
+//        if (products.isEmpty()) {
+//            throw new ResourceNotFoundException("Database is empty");
+//        }
 
         List<ProductResponse> productsResponse = products.stream()
                 .map(product -> mapperModel.map(product, ProductResponse.class))
                 .toList();
 
-        return new ApiResponse<List<ProductResponse>>(
+        PageResponse<ProductResponse> pageResponse = new PageResponse<>(
+                productsResponse,
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalElements(),
+                productPage.getTotalPages(),
+                productPage.isLast()
+        );
+
+        return new ApiResponse<PageResponse<ProductResponse>>(
                 true,
                 "List of Products",
-                productsResponse,
+                pageResponse,
                 LocalDateTime.now(),
-                302
+                200
         );
     }
 
@@ -71,7 +84,7 @@ public class ProductServiceImplementation implements ProductService {
                 .anyMatch(role -> role.getName().equals("ADMIN") || role.getName().equals("ROLE_ADMIN"));
 
         if (!isAdmin) {
-            throw new CustomException("You are not authorised", HttpStatus.FORBIDDEN);
+            throw new CustomException("You are not authorised", HttpStatus.UNAUTHORIZED);
         }
 
         Product product = mapperModel.map(productRequest, Product.class);
@@ -136,7 +149,7 @@ public class ProductServiceImplementation implements ProductService {
                 "Product Found!",
                 productResponse,
                 LocalDateTime.now(),
-                302
+                200
         );
     }
 
@@ -147,7 +160,7 @@ public class ProductServiceImplementation implements ProductService {
         Product product = productRepo.findById(orderRequest.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         if (orderRequest.getQuantity() > product.getStock()) {
-            throw new RuntimeException("Not enough stock, available stock is " + product.getStock());
+            throw new CustomException("Not enough stock, available stock is " + product.getStock(), HttpStatus.UNPROCESSABLE_CONTENT);
         }
         product.setStock(product.getStock() - orderRequest.getQuantity());
         productRepo.save(product);
@@ -167,7 +180,7 @@ public class ProductServiceImplementation implements ProductService {
                 "Order placed successfully for the item "+product.getProductName(),
                 null,
                 LocalDateTime.now(),
-                200
+                201
         );
     }
 
@@ -187,7 +200,7 @@ public class ProductServiceImplementation implements ProductService {
                 "Your orders",
                 orderResponse,
                 LocalDateTime.now(),
-                302
+                200
         );
     }
 
@@ -205,7 +218,7 @@ public class ProductServiceImplementation implements ProductService {
                 "All customer orders",
                 orders,
                 LocalDateTime.now(),
-                302
+                200
         );
     }
 }

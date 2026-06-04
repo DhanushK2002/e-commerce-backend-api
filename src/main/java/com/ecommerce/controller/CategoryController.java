@@ -30,18 +30,18 @@ public class CategoryController {
 	public ResponseEntity<ApiResponse<PageResponse<CategoryResponse>>> getAllCategories(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		ApiResponse<PageResponse<CategoryResponse>> response = categoryService.getAllCategories(pageable);
-		return ResponseEntity.status(HttpStatus.FOUND).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping("/category/{categoryName}")
 	public ResponseEntity<ApiResponse<CategoryResponse>> findCategoryByName(@PathVariable String categoryName) {
 		ApiResponse<CategoryResponse> response = categoryService.findByCategoryName(categoryName);
-		return ResponseEntity.status(HttpStatus.FOUND).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping("/subcategory/{subCategoryName}")
 	public ResponseEntity<ApiResponse<List<SubCategoryDto>>> getSubCategoryByName(@PathVariable String subCategoryName) {
 		ApiResponse<List<SubCategoryDto>> response = categoryService.getSubCategoryByName(subCategoryName);
-		return ResponseEntity.status(HttpStatus.FOUND).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }

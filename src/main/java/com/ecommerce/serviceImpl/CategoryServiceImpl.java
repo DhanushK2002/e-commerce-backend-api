@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.ecommerce.exception.CustomException;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.dto.ApiResponse;
@@ -49,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
 		List<Category> categories = categoryPage.getContent();
 
 		if(categoryPage.isEmpty()) 
-			throw new ResourceNotFoundException("You reached to the end of the page");
+			throw new CustomException("You reached to the end of the page", HttpStatus.OK);
 		
 		List<CategoryResponse> categoryResponseList =  categories.stream()
 				.map(category -> mapperModel.map(category, CategoryResponse.class))
@@ -68,7 +67,8 @@ public class CategoryServiceImpl implements CategoryService {
 				"Product Categories",
 				pageResponse,
 				LocalDateTime.now(),
-				302);
+				200
+		);
 	}
 
 	@Override
@@ -85,7 +85,8 @@ public class CategoryServiceImpl implements CategoryService {
 				true,
 				"Respected category fetched successfully",
 				categoryDto, LocalDateTime.now(),
-				302);
+				200
+		);
 	}
 
 	@Override
@@ -107,6 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
 				"Respected Subcategory fetched successfully",
 				subCatDto,
 				LocalDateTime.now(),
-				302);
+				200
+		);
 	}
 }

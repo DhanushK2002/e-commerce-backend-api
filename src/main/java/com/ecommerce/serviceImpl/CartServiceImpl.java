@@ -66,7 +66,7 @@ public class CartServiceImpl implements CartService {
 //                });
 
         if(cartItemRequest.getQuantity() > product.getStock())
-            throw new RuntimeException("Quantity Out of stock");
+            throw new CustomException("Quantity Out of stock", HttpStatus.BAD_REQUEST);
 
         Optional<CartItem> existingItemOpt = cart.getCartItemList().stream()
                 .filter(item -> item.getProduct().getProductId().equals(cartItemRequest.getProductId()))
@@ -125,7 +125,7 @@ public class CartServiceImpl implements CartService {
                 }).toList();
 
         Double totalPrice = itemResponses.stream()
-                .mapToDouble(itemPrice -> itemPrice.getSubTotal())
+                .mapToDouble(CartItemResponse::getSubTotal/*itemPrice -> itemPrice.getSubTotal()*/)
                 .sum();
         CartResponse cartResponse = new CartResponse(cart.getCartId(), itemResponses, totalPrice);
 
@@ -137,7 +137,7 @@ public class CartServiceImpl implements CartService {
                 "Cart fetched successfully",
                 cartResponse,
                 LocalDateTime.now(),
-                302
+                200
         );
     }
 
